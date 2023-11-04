@@ -1,0 +1,14 @@
+body {
+    display: flex;
+    flex-direction: column;
+    background-color: #323437;
+    color: #bec1c4;
+
+    margin-bottom: 10px;
+}
+
+temp {
+    justify-content:space-between; /* Center the board horizontally on the page */
+    align-items: center; /* Center the board vertically on the page */
+
+}
