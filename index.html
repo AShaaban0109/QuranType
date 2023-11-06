@@ -1,19 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quran Type</title>
     <link rel="stylesheet" href="styles.css">
     <script src="logic.js" defer></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- <link href="https://fonts.googleapis.com/css?family=Amiri&display=swap" rel="stylesheet"> -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic&display=swap" rel="stylesheet">
+
 </head>
 <body>
-    <div id="header">
+    <h1>Quran Type</h1>
+    <div id="Quran-container">
         
     </div>
-    <div id="typingArea"></div>
-        <div id="wordsContainer"></div>
-        <div id="typeBox"></div>
-    <div id="footer"></div>
+    <div id="Quran-input-container">
+        <!-- sort out input -->
+        <input>
+    </div>
+    <div class="configuration">
+        <div class="grid-size-config">
+            <label for="grid-size-input">Enter a new grid size:</label>
+            <input type="text" class="grid-size-input">
+            <button class="create-new-grid-button">Create</button>
+        </div>
+        <div class="colour-config">
+            <button class="randomize-colours-button">Randomize</button>
+        </div>
+        <button class="reset-button">Reset</button>
+    </div>
 </body>
 </html>

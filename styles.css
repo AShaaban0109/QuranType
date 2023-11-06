@@ -1,14 +1,51 @@
 body {
     display: flex;
     flex-direction: column;
+    justify-content:space-between; /* Center the board horizontally on the page */
+    align-items: center; /* Center the board vertically on the page */
     background-color: #323437;
     color: #bec1c4;
 
     margin-bottom: 10px;
 }
 
-temp {
-    justify-content:space-between; /* Center the board horizontally on the page */
-    align-items: center; /* Center the board vertically on the page */
+#Quran-container {
+    display: flex;
+    width: 600px; /* Set the fixed width of the board */
+    height: 400px; /* Set the fixed height of the board */
+    flex-direction: column;
+    /* flex: 1; */
+    overflow:hidden;
 
+    /* Use the desired Arabic font */
+    /* font-family: 'Amiri', sans-serif;  */
+    /* font-family: 'Cairo', sans-serif; */
+    font-family: 'Noto Naskh Arabic', serif;
+
+    font-size: 26px;
+    text-align: right;
+}
+
+.row {
+    display: flex;
+    flex: 1;
+}
+
+.square {
+    flex: 1;
+}
+
+.configuration {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-top: 10px;
+}
+
+.randomize-colours-button {
+    flex: 1;
+}
+
+.colour-config {
+    display: flex;
 }
