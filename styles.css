@@ -11,19 +11,26 @@ body {
 
 #Quran-container {
     display: flex;
-    width: 600px; /* Set the fixed width of the board */
+    width: 800px; /* Set the fixed width of the board */
     height: 400px; /* Set the fixed height of the board */
     flex-direction: column;
     /* flex: 1; */
     overflow:hidden;
+    /* If want on new lines instead of following each other */
+    /* white-space: pre-line; */
+
 
     /* Use the desired Arabic font */
     /* font-family: 'Amiri', sans-serif;  */
     /* font-family: 'Cairo', sans-serif; */
     font-family: 'Noto Naskh Arabic', serif;
 
-    font-size: 26px;
+    font-size: 30px;
     text-align: right;
+}
+
+#inputField {
+    width: 700px; /* Adjust the width as needed */
 }
 
 .row {
