@@ -18,6 +18,7 @@ function convertToArabicNumber(englishNumber) {
 
 // Function to retrieve and populate a Surah into the div
 function getSurah(surahNumber = 1) {
+  currentLetterIndex = 0
 
   // Make an API request to fetch the Surah data
   $.ajax({
@@ -37,23 +38,45 @@ function getSurah(surahNumber = 1) {
 
 // Extract and display the Surah content from the API response
 function displaySurahFromJson(data) {
+    const quranContainer = document.getElementById("Quran-container");
+    const surahName = document.getElementById("Surah-name");
+    const BasmallahContainer = document.getElementById("Basmallah");
+    
     let noTashkeelAyahs = []
-    const surahContent = data.data.ayahs.map(function (ayah, ayahIdx) {
-        const ayahNum = ayahIdx + 1 
-        const arabicNumber = convertToArabicNumber(ayahNum)
-
+    let surahContent = data.data.ayahs.map(function (ayah, ayahIdx) {
+        const arabicNumber = convertToArabicNumber(ayahIdx + 1 )
         const processedAyah = ayah.text.replace("\n", "")  // remove this if want to log on new lines 
-        noTashkeelAyahs.push(processedAyah)  
+        noTashkeelAyahs.push(processedAyah)
+
+        return `${processedAyah} ﴿${arabicNumber}﴾`;
+          
+    }).join(" ");
 
 
-        // TODO FIX THIS BUG IN DISPLAYING
-        return `${processedAyah} ﴿${arabicNumber}﴾ `;
-    }).join("");
+    surahName.textContent =  data.data.name
 
+    // handle Basmallah in all surahs except 1:Al-Fatiha, and 9:Al-Tawba
+    switch (data.data.number) {
+      case 1:
+          BasmallahContainer.textContent = "";
+          break;
+  
+      case 9:
+          BasmallahContainer.textContent = "";
+          break;
+  
+      default:
+          const Basmallah = surahContent.substring(0, 39);
+          BasmallahContainer.textContent = Basmallah;
+  
+          surahContent = surahContent.slice(40);
+          noTashkeelAyahs[0] = noTashkeelAyahs[0].slice(40);
+  }
+  
+
+    quranContainer.textContent = surahContent
     const noTashkeel = createNoTashkeelString(noTashkeelAyahs)
     addToHiddenElement(noTashkeel)
-
-    $("#Quran-container").html(surahContent);
 }
 
 function createNoTashkeelString(noTashkeelAyahs) {
@@ -63,11 +86,8 @@ function createNoTashkeelString(noTashkeelAyahs) {
 
 // create new hidden div with no tashkeel to match with the typing
 function addToHiddenElement(content) {
-    const hiddenDiv = document.createElement('div');
-    hiddenDiv.style.display = 'none';
-    hiddenDiv.innerHTML = content;
-    hiddenDiv.id = 'noTashkeelContainer'; // Replace 'your-id-here' with your desired ID
-    document.body.appendChild(hiddenDiv);
+    const hiddenDiv = document.getElementById('noTashkeelContainer');
+    hiddenDiv.textContent = content;
 }
 
 
@@ -121,11 +141,20 @@ let currentLetterIndex = 0
 var inputElement = document.getElementById("inputField");
 var processButton = document.getElementById("processButton");
 
-// Add event listeners
+// Add event listeners for typing
 inputElement.addEventListener("input", handleInput);
 processButton.addEventListener("click", function() {
     var inputValue = inputElement.value;
     handleInputButton(inputValue);
+});
+
+var surahInputElement = document.getElementById("Surah-selection-input");
+var surahProcessButton = document.getElementById("Display-Surah-button");
+
+// Add event listeners for Surah selection
+surahProcessButton.addEventListener("click", function() {
+    var inputValue = surahInputElement.value;
+    getSurah(inputValue)
 });
 
 // Call the function to get and populate the Surah when the page loads
