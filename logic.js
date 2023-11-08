@@ -26,30 +26,34 @@ function getSurah(surahNumber = 1) {
     dataType: "json",
 
     success: function (data) {
-      // Extract the Surah content from the API response
-      let noTashkeelAyahs = []
-      const surahContent = data.data.ayahs.map(function (ayah, ayahIdx) {
-          const ayahNum = ayahIdx + 1 
-          const arabicNumber = convertToArabicNumber(ayahNum)
-
-          const processedAyah = ayah.text.replace("\n", "")  // remove this if want to log on new lines 
-          noTashkeelAyahs.push(processedAyah)  
-
-          return `${processedAyah} ﴿${arabicNumber}﴾ `;
-      }).join("");
-      
-      const noTashkeel = createNoTashkeelString(noTashkeelAyahs)
-      addToHiddenElement(noTashkeel)
-
-      $("#Quran-container").html(surahContent);        
+      displaySurahFromJson(data)     
     },
 
     error: function (error) {
       console.log("Error:", error);
     }
   });
+}
+
+// Extract and display the Surah content from the API response
+function displaySurahFromJson(data) {
+    let noTashkeelAyahs = []
+    const surahContent = data.data.ayahs.map(function (ayah, ayahIdx) {
+        const ayahNum = ayahIdx + 1 
+        const arabicNumber = convertToArabicNumber(ayahNum)
+
+        const processedAyah = ayah.text.replace("\n", "")  // remove this if want to log on new lines 
+        noTashkeelAyahs.push(processedAyah)  
 
 
+        // TODO FIX THIS BUG IN DISPLAYING
+        return `${processedAyah} ﴿${arabicNumber}﴾ `;
+    }).join("");
+
+    const noTashkeel = createNoTashkeelString(noTashkeelAyahs)
+    addToHiddenElement(noTashkeel)
+
+    $("#Quran-container").html(surahContent);
 }
 
 function createNoTashkeelString(noTashkeelAyahs) {
