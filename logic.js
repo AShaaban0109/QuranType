@@ -95,6 +95,7 @@ function fillContainer(surahContent, container) {
 
     // turn each word into a span
     let words = surahContent.split(" ")
+    console.log(words.join(" "));
 
     words.forEach((word) => {
         let wordSpan = document.createElement("span");
@@ -138,25 +139,57 @@ function handleInput(event) {
 
         // check if next word is ayah number
         const endOfAyah = quranContainer.childNodes[mainQuranWordIndex]
-        if (endOfAyah.textContent.includes('﴿')) {
+        if (QURAN_SYMBOLS.some(char => endOfAyah.textContent.includes(char)  )) {
             mainQuranWordIndex++
         }
     }
 }
 
-// helper function for now. for testing
-function handleInputButton(event) {
-    const quranContainer = document.getElementById("noTashkeelContainer");
-    quranText = quranContainer.textContent 
+const QURAN_SYMBOLS = ["۞‎", "﴾","﴿", "۩‎"]
 
+// helper function for now. for testing
+// todo refactor this and the other button to make them nicer
+function handleInputButton(event) {
+    
+    let mainQuranWordIndex = 0
+    let noTashkeelWordIndex = 0
     let newCurrentLetterIndex = 0
+    
+    const quranContainer = document.getElementById("Quran-container");
+    const noTashkeelContainer = document.getElementById("noTashkeelContainer");
+    let quranText = noTashkeelContainer.childNodes[noTashkeelWordIndex].textContent 
+    
+    quranContainer.childNodes.forEach(node => {
+        node.style.color = document.body.style.color
+    });
+
     let currentLetter = quranText[newCurrentLetterIndex];
     let toPrint = []
     for (let i = 0; i < event.length; i++) {
+        currentLetter = quranText[newCurrentLetterIndex]
         if (event[i] === currentLetter) {
             toPrint.push(currentLetter);            
             newCurrentLetterIndex++
-            currentLetter = quranText[newCurrentLetterIndex]
+        } else {
+            const incorrectWord = quranContainer.childNodes[mainQuranWordIndex]
+            incorrectWord.style.color = "red"            
+        }
+        // next word
+        if (currentLetter === " ") {
+            const correctWord = quranContainer.childNodes[mainQuranWordIndex]
+            correctWord.style.color = "green"
+            
+            newCurrentLetterIndex = 0
+            mainQuranWordIndex++
+            noTashkeelWordIndex++
+            quranText = noTashkeelContainer.childNodes[noTashkeelWordIndex].textContent 
+
+
+            // check if next word is ayah number
+            const endOfAyah = quranContainer.childNodes[mainQuranWordIndex]
+            if (QURAN_SYMBOLS.some(char => endOfAyah.textContent.includes(char)  )) {
+                mainQuranWordIndex++
+            }
         }
     }
     console.log(toPrint.join(""));
