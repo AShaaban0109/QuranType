@@ -18,22 +18,24 @@ function convertToArabicNumber(englishNumber) {
 
 // Function to retrieve and populate a Surah into the div
 function getSurah(surahNumber = 1) {
-  currentLetterIndex = 0
+    currentLetterIndex = 0
+    mainQuranWordIndex = 0
+    noTashkeelWordIndex = 0
 
-  // Make an API request to fetch the Surah data
-  $.ajax({
-    url: `http://api.alquran.cloud/v1/surah/${surahNumber}`,
-    type: "GET",
-    dataType: "json",
+    // Make an API request to fetch the Surah data
+    $.ajax({
+        url: `http://api.alquran.cloud/v1/surah/${surahNumber}`,
+        type: "GET",
+        dataType: "json",
 
-    success: function (data) {
-      displaySurahFromJson(data)     
-    },
+        success: function (data) {
+        displaySurahFromJson(data)     
+        },
 
-    error: function (error) {
-      console.log("Error:", error);
-    }
-  });
+        error: function (error) {
+        console.log("Error:", error);
+        }
+    });
 }
 
 // Extract and display the Surah content from the API response
@@ -74,9 +76,31 @@ function displaySurahFromJson(data) {
   }
   
 
-    quranContainer.textContent = surahContent
+    // quranContainer.textContent = surahContent
+    fillContainer(surahContent,quranContainer)
+
     const noTashkeel = createNoTashkeelString(noTashkeelAyahs)
-    addToHiddenElement(noTashkeel)
+
+    // create new hidden div with no tashkeel to match with the typing
+    const hiddenDiv = document.getElementById('noTashkeelContainer');
+    // hiddenDiv.textContent = noTashkeel;
+    fillContainer(noTashkeel, hiddenDiv)
+}
+
+
+function fillContainer(surahContent, container) {
+    while (container.firstChild) {
+        container.removeChild(container.firstChild);
+      }
+
+    // turn each word into a span
+    let words = surahContent.split(" ")
+
+    words.forEach((word) => {
+        let wordSpan = document.createElement("span");
+        wordSpan.textContent = word + " "
+        container.appendChild(wordSpan)
+    });
 }
 
 function createNoTashkeelString(noTashkeelAyahs) {
@@ -84,16 +108,12 @@ function createNoTashkeelString(noTashkeelAyahs) {
     return noTashkeelAyahs.join(" ")
 }
 
-// create new hidden div with no tashkeel to match with the typing
-function addToHiddenElement(content) {
-    const hiddenDiv = document.getElementById('noTashkeelContainer');
-    hiddenDiv.textContent = content;
-}
-
-
+let mainQuranWordIndex = 0 // this will be one ahead due to the ayah numbers
+let noTashkeelWordIndex = 0
 function handleInput(event) {
-    const quranContainer = document.getElementById("noTashkeelContainer");
-    quranText = quranContainer.textContent 
+    const quranContainer = document.getElementById("Quran-container");
+    const noTashkeelContainer = document.getElementById("noTashkeelContainer");
+    let quranText = noTashkeelContainer.childNodes[noTashkeelWordIndex].textContent 
 
     const inputText = event.data;
     const currentLetter = quranText[currentLetterIndex];
@@ -101,6 +121,26 @@ function handleInput(event) {
     if (inputText === currentLetter) {
         console.log(inputText);
         currentLetterIndex++;
+    } else {
+        const incorrectWord = quranContainer.childNodes[mainQuranWordIndex]
+        incorrectWord.style.color = "red"
+    }
+
+    // next word
+    if (currentLetter === " ") {
+        const correctWord = quranContainer.childNodes[mainQuranWordIndex]
+        correctWord.style.color = "green"
+        
+        currentLetterIndex = 0
+        mainQuranWordIndex++
+        noTashkeelWordIndex++
+
+
+        // check if next word is ayah number
+        const endOfAyah = quranContainer.childNodes[mainQuranWordIndex]
+        if (endOfAyah.textContent.includes('﴿')) {
+            mainQuranWordIndex++
+        }
     }
 }
 
