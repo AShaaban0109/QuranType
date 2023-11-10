@@ -230,5 +230,50 @@ surahProcessButton.addEventListener("click", function() {
     getSurah(inputValue)
 });
 
+
+function toggleMode() {
+    const body = document.body;
+    const modeToggle = document.getElementById('darkModeToggle');
+
+    if (modeToggle.checked) {
+        // Dark mode
+        body.style.backgroundColor = '#333';
+        body.style.color = '#f4f4f4';
+    } else {
+        // Light mode
+        body.style.backgroundColor = '#f4f4f4';
+        body.style.color = '#333';
+    }
+}
+
+
 // Call the function to get and populate the Surah when the page loads
 getSurah(114);
+
+
+
+
+
+// Check for saved dark mode preference
+const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+let isDarkMode = localStorage.getItem('darkMode') === 'enabled' || prefersDarkMode;
+
+// Apply dark mode if enabled
+if (isDarkMode) {
+    document.body.classList.add('dark-mode');
+    document.getElementById('light-mode-icon').style.display = 'none';
+    document.getElementById('dark-mode-icon').style.display = 'inline';
+}
+
+// Function to toggle dark mode
+function toggleDarkMode() {
+    isDarkMode = !isDarkMode;
+    document.body.classList.toggle('dark-mode');
+
+    // Update the icon display
+    document.getElementById('light-mode-icon').style.display = isDarkMode ? 'none' : 'inline';
+    document.getElementById('dark-mode-icon').style.display = isDarkMode ? 'inline' : 'none';
+
+    // Save the dark mode preference
+    localStorage.setItem('darkMode', isDarkMode ? 'enabled' : 'disabled');
+}

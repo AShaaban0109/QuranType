@@ -1,14 +1,104 @@
 body {
     display: flex;
-    max-height: 100vh;
     flex-direction: column;
     justify-content:space-between; /* Center the board horizontally on the page */
-    align-items: center; /* Center the board vertically on the page */
-    background-color: #323437;
-    color: #bec1c4;
+    margin: 0;
+    min-height: 100vh;
+    transition: background-color 0.3s ease;
 
-    margin-bottom: 10px;
+
+    background-color: #323437; /* Dark Theme */
+    background-color: #f5f5f5; /* Light Theme */
+    
+    color: #bec1c4; /* Light Theme */
+    color: #333;    /* Dark Theme */
+    
+
+    
+    /* stuff i commented out for some reason*/
+
+    /* max-height: 100vh; */
+    /* Center the board vertically on the page */
+    /* align-items: center; */
+    /* margin-bottom: 10px; */
+    /* display: block; */
+    /* width: 100%;
+    height: 100%; */
+    /* overflow-x: hidden; */
+    /* padding: 0; */
 }
+
+#header {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+#contentContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+
+    direction: rtl;
+}
+
+#footer {
+    display: flex;
+    justify-content: center;
+}
+
+a {
+    color: #007bff; /* Blue color, you can change this to any color value you prefer */
+    text-decoration: none; /* Remove underline, you can customize this based on your design */
+  }
+
+  /* Change the color of links when hovered */
+  a:hover {
+    color: #004080; /* Darker blue color on hover, adjust as needed */
+  }
+
+  #searchContainer {
+    display: flex;
+    gap: 5px;
+    /* align-self: flex-end; Align this item to the bottom of the container */
+    
+    /* align-items: center; */
+    /* justify-content: center; */
+    
+    /* background-color: #fff; */
+    /* padding: 20px; */
+    /* border-radius: 8px; */
+    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
+  }
+
+  
+
+  input[type="search"] {
+    /* flex: 1; */
+
+    /* width: 100%; */
+    padding: 10px;
+    /* margin-bottom: 15px; */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+
+  button {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  button:hover {
+    background-color: #0056b3;
+  }
 
 #Quran-container {
     /* removed flex for now cos it messes up whitespace for copy and pasting divs */
@@ -17,13 +107,14 @@ body {
     /* text-align: right; */
     /* align-items: center; */
 
-    width: 700px; /* Set the fixed width of the board */
-    height: 400px; /* Set the fixed height of the board */
+    width: 800px; /* Set the fixed width of the board */
+    height: 275px; /* Set the fixed height of the board */
     overflow:hidden;
     font-family: 'Noto Naskh Arabic', serif;
-    font-size: 30px;
+    font-size: 42px;
 
 }
+
 
 #noTashkeelContainer {
     display: none;
@@ -41,14 +132,6 @@ body {
     width: 700px; /* Adjust the width as needed */
 }
 
-.row {
-    display: flex;
-    flex: 1;
-}
-
-.square {
-    flex: 1;
-}
 
 .configuration {
     display: flex;
@@ -57,10 +140,28 @@ body {
     margin-top: 10px;
 }
 
-.randomize-colours-button {
-    flex: 1;
+/* idk if i want this to be fixed. It is good when it is flex */
+/* .toggle-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+} */
+
+#dark-mode-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    outline: none;
 }
 
-.colour-config {
-    display: flex;
+#light-mode-icon,
+#dark-mode-icon {
+    width: 48px;
+    height: 48px;
+}
+
+
+.dark-mode {
+    background-color: #333;
+    color: #fff;
 }
