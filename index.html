@@ -13,26 +13,35 @@
     <!-- <link href="https://fonts.googleapis.com/css?family=Amiri&display=swap" rel="stylesheet"> -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic&display=swap" rel="stylesheet">
 
+    <!-- logo font tests -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Parisienne&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tangerine&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Noto+Naskh+Arabic&display=swap" rel="stylesheet">
+    
+
 </head>
 <body>
     <div id="header">
         <h1>Quran Type</h1>
-        <div id="searchContainer">
-            <input type="search" placeholder="Enter Surah number" aria-label="Search Quran"
-                    autocomplete="off" id="Surah-selection-input">
-            <button id="Display-Surah-button">Display</button>
+        <div id="headerRight">
+            <div id="searchContainer">
+                <input type="search" placeholder="Enter Surah number" aria-label="Search Quran"
+                        autocomplete="off" id="Surah-selection-input">
+                <button id="Display-Surah-button">Display</button>
+            </div>
+            
+            <div class="toggle-container">
+                <button id="dark-mode-toggle" onclick="toggleDarkMode()">
+                    <!-- Light mode SVG -->
+                    <img src="images/LanternLight.svg" alt="Light Mode" id="light-mode-icon">
+                    <!-- Dark mode SVG -->
+                    <img src="images/LanternDark.svg" alt="Dark Mode" id="dark-mode-icon" style="display: none;">
+                </button>
+            </div>
         </div>
-        
-        <div class="toggle-container">
-            <button id="dark-mode-toggle" onclick="toggleDarkMode()">
-                <!-- Light mode SVG -->
-                <img src="images/LanternLight.svg" alt="Light Mode" id="light-mode-icon">
-                <!-- Dark mode SVG -->
-                <img src="images/LanternDark.svg" alt="Dark Mode" id="dark-mode-icon" style="display: none;">
-            </button>
-        </div>
-
-
     </div>
 
     <div value dir="rtl" id="contentContainer">

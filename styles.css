@@ -32,6 +32,25 @@ body {
     display: flex;
     justify-content: space-around;
     align-items: center;
+    margin: 10px 0px;
+}
+
+h1 {
+    /* font-family: 'Great Vibes', cursive; */
+    /* font-family: 'Parisienne', cursive; */
+    /* font-family: 'Caveat', cursive; */
+    /* font-family: 'Tangerine', cursive; */
+    /* font-family: 'Josefin Sans', sans-serif; */
+
+    font-family: 'Dancing Script', cursive;
+    font-size: 3em; /* Maybe change this */
+    margin: 0px;
+  }
+
+#headerRight {
+    display: flex;
+    align-items: center;
+
 }
 
 #contentContainer {
@@ -108,8 +127,8 @@ a {
     /* align-items: center; */
 
     width: 800px; /* Set the fixed width of the board */
-    height: 275px; /* Set the fixed height of the board */
-    overflow:hidden;
+    height: 348px; /* Set the fixed height of the board */
+    overflow: auto;
     font-family: 'Noto Naskh Arabic', serif;
     font-size: 42px;
 
