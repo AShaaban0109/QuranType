@@ -5,8 +5,10 @@ refactor input and the other button to make them nicer
 fix bug with last ya here. it only accept ي and doesnt work with any ى
 قل أعوذ برب الناس ملك الناس إلاه الناس من شر الوسواس الخناس ااذي 
 
-TODO TMRW
-Do hide overflow, and make the content scroll down dynamically basically. After a user has
-typed the first row, the first row spans are removed from the container, and the next
-row from the bottom appears.
 
+sort out bug when when press button then type from the middle of the word it doesnt work
+it only works from the start of the word. should be a simple index update
+
+can maybe make the animation smoother?
+
+maybe add some feature or popup or smth when all the words in the final row have been finished

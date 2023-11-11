@@ -4,7 +4,9 @@ body {
     justify-content:space-between; /* Center the board horizontally on the page */
     margin: 0;
     min-height: 100vh;
+    
     transition: background-color 0.3s ease;
+
 
 
     background-color: #323437; /* Dark Theme */
@@ -128,8 +130,10 @@ a {
 
     width: 800px; /* Set the fixed width of the board */
     height: 348px; /* Set the fixed height of the board */
+
     /* overflow: auto; */
     overflow: hidden;
+
     font-family: 'Noto Naskh Arabic', serif;
     font-size: 42px;
 
@@ -187,9 +191,14 @@ a {
 }
 
 .row {
-    /* to do */
+    opacity: 1; /* Initially visible */
+    transition: opacity 0.5s ease; /* Adding a transition effect on opacity change */
 }
 
 .hidden {
+    opacity:0;
+}
+
+.display-none {
     display: none;
 }

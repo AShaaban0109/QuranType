@@ -5,6 +5,10 @@ const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matche
 let isDarkMode = localStorage.getItem('darkMode') === 'enabled' || prefersDarkMode;
 
 let MAX_ROWS = 5
+
+let rows = []
+let rowEndIndices = []
+let rowIndex = 0
 let currentLetterIndex = 0
 let mainQuranWordIndex = 0 // this will be one ahead of notashkeet due to the ayah numbers
 let noTashkeelWordIndex = 0
@@ -31,6 +35,10 @@ function convertToArabicNumber(englishNumber) {
 
 // Function to retrieve and populate a Surah into the div
 function getSurah(surahNumber = 1) {
+    // clear everything
+    rowIndex = 0
+    rows = []
+    rowEndIndices = []
     currentLetterIndex = 0
     mainQuranWordIndex = 0
     noTashkeelWordIndex = 0
@@ -89,7 +97,6 @@ function displaySurahFromJson(data) {
   }
   // bug fix. Wait for fonts to load then fill container. Fixes offsetTop issue
   document.fonts.ready.then(function () {
-        console.log(document.fonts.ready);
         // Your code using offsetTop here
         fillContainerWithRows(surahContent, quranContainer);
     });
@@ -123,19 +130,20 @@ function clearContainer(container) {
       }
 }
 
+
+
 function fillContainerWithRows(surahContent, container) {
     clearContainer(container)
     let words = surahContent.split(" ")
     let currentTopOffset = getOriginalTopOffset(container)
 
 
-    let rows = []
     let currentRow = document.createElement('div');
-    rows.push(currentRow)
     currentRow.classList.add("row")
+    rows.push(currentRow)
     container.appendChild(currentRow);
 
-    words.forEach(word => {
+    words.forEach((word, wordIndex) => {
         const span = document.createElement('span');
         span.textContent = word + ' ';
         currentRow.appendChild(span);
@@ -144,6 +152,11 @@ function fillContainerWithRows(surahContent, container) {
         // then span has been auto moved on to the next line. detect this and handle it.
         const offsetTop = span.offsetTop;
         if (offsetTop > currentTopOffset) {
+
+            // add the previous word as the last word in that row. 
+            // This can then be used to hide that row and 'scroll' to the next when that word is typed. 
+            rowEndIndices.push(wordIndex - 1)
+
             currentRow.removeChild(span)
 
             currentRow = document.createElement('div');
@@ -154,7 +167,7 @@ function fillContainerWithRows(surahContent, container) {
             
             currentTopOffset = span.offsetTop; // Reset the topOffset for the new row
             if (MAX_ROWS < rows.length) {
-                currentRow.classList.add("hidden")
+                // currentRow.classList.add("hidden")
             }
         }
     });
@@ -182,6 +195,20 @@ function createNoTashkeelString(noTashkeelAyahs) {
     return noTashkeelAyahs.join(" ")
 }
 
+function getTransitionDuration(element) {
+    // Get the computed style of the element
+    let style = window.getComputedStyle(element);
+    
+    // Extract the 'transition-duration' property value
+    let transitionDuration = style.getPropertyValue('transition-duration');
+  
+    // Convert the string value to a number in milliseconds
+    let durationInMs = parseFloat(transitionDuration) * 1000;
+  
+    // Return the duration in milliseconds
+    return durationInMs;
+  }
+
 function handleInput(event) {
     const quranContainer = document.getElementById("Quran-container");
     const wordSpans = quranContainer.querySelectorAll('span');
@@ -192,28 +219,39 @@ function handleInput(event) {
     const inputText = event.data;
     const currentLetter = quranText[currentLetterIndex];
 
-    if (inputText === currentLetter) {
-        console.log(inputText);
-        currentLetterIndex++;
-    } else {
+    if (inputText !== currentLetter) {
         const incorrectWord = wordSpans[mainQuranWordIndex]
         incorrectWord.style.color = "red"
-    }
+    } else {
+        console.log(inputText);
+        currentLetterIndex++;
 
-    // next word
-    if (currentLetter === " ") {
-        const correctWord = wordSpans[mainQuranWordIndex]
-        correctWord.style.color = "green"
-        
-        currentLetterIndex = 0
-        mainQuranWordIndex++
-        noTashkeelWordIndex++
+        // next word
+        if (currentLetter === " ") {
+            const correctWord = wordSpans[mainQuranWordIndex]
+            correctWord.style.color = "green"
+            
+            // check if reached end of row
+            if (mainQuranWordIndex === rowEndIndices[rowIndex]) {            
+                let transitionDuration = getTransitionDuration(rows[0]); // Fetch transition duration
 
+                rows[rowIndex].classList.add("hidden")
+                setTimeout(function() {
+                    rows[rowIndex].classList.add("display-none")
+                    rowIndex++
+                  }, transitionDuration);
+            }
 
-        // check if next word is ayah number
-        const endOfAyah = wordSpans[mainQuranWordIndex]
-        if (QURAN_SYMBOLS.some(char => endOfAyah.textContent.includes(char)  )) {
+            
+            currentLetterIndex = 0
             mainQuranWordIndex++
+            noTashkeelWordIndex++
+
+            // check if next word is ayah number
+            const endOfAyah = wordSpans[mainQuranWordIndex]
+            if (QURAN_SYMBOLS.some(char => endOfAyah.textContent.includes(char)  )) {
+                mainQuranWordIndex++
+            }
         }
     }
 }
@@ -221,7 +259,7 @@ function handleInput(event) {
 // helper function for now. for testing
 // todo refactor this and the other button to make them nicer
 function handleInputButton(event) {
-    
+    rowIndex = 0
     mainQuranWordIndex = 0
     noTashkeelWordIndex = 0
     newCurrentLetterIndex = 0
