@@ -128,7 +128,8 @@ a {
 
     width: 800px; /* Set the fixed width of the board */
     height: 348px; /* Set the fixed height of the board */
-    overflow: auto;
+    /* overflow: auto; */
+    overflow: hidden;
     font-family: 'Noto Naskh Arabic', serif;
     font-size: 42px;
 
@@ -183,4 +184,12 @@ a {
 .dark-mode {
     background-color: #333;
     color: #fff;
+}
+
+.row {
+    /* to do */
+}
+
+.hidden {
+    display: none;
 }
