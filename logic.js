@@ -1,3 +1,5 @@
+import utils from './utils.js';
+
 const QURAN_SYMBOLS = ["۞‎", "﴾","﴿", "۩‎"]
 
 // Check for saved dark mode preference
@@ -12,26 +14,6 @@ let rowIndex = 0
 let currentLetterIndex = 0
 let mainQuranWordIndex = 0 // this will be one ahead of notashkeet due to the ayah numbers
 let noTashkeelWordIndex = 0
-
-
-
-function convertToArabicNumber(englishNumber) {
-    englishNumber = englishNumber.toString()
-
-    const arabicNumbers = ["٠", "١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩"];
-    const englishDigits = "0123456789";
-    const englishToArabicMap = {};
-  
-    for (let i = 0; i < englishDigits.length; i++) {
-      englishToArabicMap[englishDigits[i]] = arabicNumbers[i];
-    }
-  
-    const arabicNumber = englishNumber.replace(/\d/g, function (match) {
-      return englishToArabicMap[match];
-    });
-  
-    return arabicNumber;
-  }
 
 // Function to retrieve and populate a Surah into the div
 function getSurah(surahNumber = 1) {
@@ -67,7 +49,7 @@ function displaySurahFromJson(data) {
     
     let noTashkeelAyahs = []
     let surahContent = data.data.ayahs.map(function (ayah, ayahIdx) {
-        const arabicNumber = convertToArabicNumber(ayahIdx + 1 )
+        const arabicNumber = utils.convertToArabicNumber(ayahIdx + 1 )
         const processedAyah = ayah.text.replace("\n", "")  // remove this if want to log on new lines 
         noTashkeelAyahs.push(processedAyah)
 
@@ -95,47 +77,23 @@ function displaySurahFromJson(data) {
           surahContent = surahContent.slice(40);
           noTashkeelAyahs[0] = noTashkeelAyahs[0].slice(40);
   }
-  // bug fix. Wait for fonts to load then fill container. Fixes offsetTop issue
+
+  // Wait for fonts to load then fill container. Fixes offsetTop issue
   document.fonts.ready.then(function () {
         // Your code using offsetTop here
         fillContainerWithRows(surahContent, quranContainer);
     });
-
     
-
-    const noTashkeel = createNoTashkeelString(noTashkeelAyahs)
-
     // create new hidden div with no tashkeel to match with the typing
+    const noTashkeel = utils.createNoTashkeelString(noTashkeelAyahs)
     const hiddenDiv = document.getElementById('noTashkeelContainer');
-    // hiddenDiv.textContent = noTashkeel;
-    fillContainer(noTashkeel, hiddenDiv)
+    utils.fillContainer(noTashkeel, hiddenDiv)
 }
-
-// quick insert and removal to get the true span offsetTop value
-function getOriginalTopOffset(container) {
-    const testRow = document.createElement('div');
-    const temp = document.createElement('span');
-    container.appendChild(testRow);
-    testRow.appendChild(temp)
-
-    let currentTopOffset = temp.offsetTop
-    testRow.removeChild(temp)
-    container.removeChild(testRow)
-    return currentTopOffset
-}
-
-function clearContainer(container) {
-    while (container.firstChild) {
-        container.removeChild(container.firstChild);
-      }
-}
-
-
 
 function fillContainerWithRows(surahContent, container) {
-    clearContainer(container)
+    utils.clearContainer(container)
     let words = surahContent.split(" ")
-    let currentTopOffset = getOriginalTopOffset(container)
+    let currentTopOffset = utils.getOriginalTopOffset(container)
 
 
     let currentRow = document.createElement('div');
@@ -173,42 +131,6 @@ function fillContainerWithRows(surahContent, container) {
     });
 }
 
-// for an old usecase
-function fillContainer(surahContent, container) {
-    while (container.firstChild) {
-        container.removeChild(container.firstChild);
-      }
-
-    // turn each word into a span
-    let words = surahContent.split(" ")
-    console.log(words.join(" "));
-
-    words.forEach((word) => {
-        let wordSpan = document.createElement("span");
-        wordSpan.textContent = word + " "
-        container.appendChild(wordSpan)
-    });
-}
-
-function createNoTashkeelString(noTashkeelAyahs) {
-    noTashkeelAyahs = noTashkeelAyahs.map((ayah) => removeTashkeel(ayah))
-    return noTashkeelAyahs.join(" ")
-}
-
-function getTransitionDuration(element) {
-    // Get the computed style of the element
-    let style = window.getComputedStyle(element);
-    
-    // Extract the 'transition-duration' property value
-    let transitionDuration = style.getPropertyValue('transition-duration');
-  
-    // Convert the string value to a number in milliseconds
-    let durationInMs = parseFloat(transitionDuration) * 1000;
-  
-    // Return the duration in milliseconds
-    return durationInMs;
-  }
-
 function handleInput(event) {
     const quranContainer = document.getElementById("Quran-container");
     const wordSpans = quranContainer.querySelectorAll('span');
@@ -233,7 +155,7 @@ function handleInput(event) {
             
             // check if reached end of row
             if (mainQuranWordIndex === rowEndIndices[rowIndex]) {            
-                let transitionDuration = getTransitionDuration(rows[0]); // Fetch transition duration
+                let transitionDuration = utils.getTransitionDuration(rows[0]); // Fetch transition duration
 
                 rows[rowIndex].classList.add("hidden")
                 setTimeout(function() {
@@ -307,47 +229,12 @@ function handleInputButton(event) {
     console.log(toPrint.join(""));
 }
 
-function removeTashkeel(text) {
-    let noTashkeel = text
-
-    noTashkeel = noTashkeel.replace(/\u0670/g, '\u0627');  // replace the small subscript alef with aleg
-    noTashkeel = noTashkeel.replace(/\u0671/g, '\u0627');  // replace the alef wasl with alef
-    noTashkeel = noTashkeel.replace(/\u06CC/g,'\u064A');  // fix an issue with the ya encoding (persian for some reason)
-    
-    // this removes everything that isnt a main char, or a 
-    noTashkeel = noTashkeel.replace(/[^\u0621-\u063A\u0641-\u064A\u0654-\u0655 ]/g, '');
-    
-    // change the ya with hamza underneath to ya with hamza above as this is available on keyboard
-    noTashkeel = noTashkeel.replace(/\u0649\u0655/g,'\u0626');
-    return noTashkeel
-}
-
-function initDarkMode() {
-    // Apply dark mode if enabled
-    if (isDarkMode) {
-        document.body.classList.add('dark-mode');
-        document.getElementById('light-mode-icon').style.display = 'none';
-        document.getElementById('dark-mode-icon').style.display = 'inline';
-    }
-}
-
-// Function to toggle dark mode
-function toggleDarkMode() {
-    isDarkMode = !isDarkMode;
-    document.body.classList.toggle('dark-mode');
-
-    // Update the icon display
-    document.getElementById('light-mode-icon').style.display = isDarkMode ? 'none' : 'inline';
-    document.getElementById('dark-mode-icon').style.display = isDarkMode ? 'inline' : 'none';
-
-    // Save the dark mode preference
-    localStorage.setItem('darkMode', isDarkMode ? 'enabled' : 'disabled');
-}
-
 function addListeners() {
     // Adding event listener for dark mode toggle
     const darkModeButton = document.getElementById('dark-mode-toggle');
-    darkModeButton.addEventListener('click', toggleDarkMode);
+    darkModeButton.addEventListener('click', function() {
+        isDarkMode = utils.toggleDarkMode(isDarkMode)
+    });
 
 
     var inputElement = document.getElementById("inputField");
@@ -370,9 +257,9 @@ function addListeners() {
     });
 }
 
-function runApp(surahNumber = 1) {
 // Init
-initDarkMode()
+function runApp(surahNumber = 1) {
+utils.initDarkMode(isDarkMode)
 addListeners()
 
 // Call the function to get and populate the Surah when the page loads
