@@ -5,6 +5,12 @@ refactor input and the other button to make them nicer
 fix bug with last ya here. it only accept ي and doesnt work with any ى
 قل أعوذ برب الناس ملك الناس إلاه الناس من شر الوسواس الخناس ااذي 
 
+// fix an issue with the ya encoding 
+    // (persian for some reason). Note this replaces all normal ya, but also the ya for alef layena.
+    //  so for something like فى it is written في. Not sure if this is fine, check with someone arabic literate.
+
+look at the whole tashkeel part again.
+
 
 sort out bug when when press button then type from the middle of the word it doesnt work
 it only works from the start of the word. should be a simple index update

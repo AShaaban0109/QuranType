@@ -24,14 +24,18 @@ export function createNoTashkeelString(noTashkeelAyahs) {
 export function removeTashkeel(text) {
     let noTashkeel = text
 
-    noTashkeel = noTashkeel.replace(/\u0670/g, '\u0627');  // replace the small subscript alef with aleg
+    noTashkeel = noTashkeel.replace(/\u0670/g, '\u0627');  // replace the small subscript alef with normal alef
     noTashkeel = noTashkeel.replace(/\u0671/g, '\u0627');  // replace the alef wasl with alef
-    noTashkeel = noTashkeel.replace(/\u06CC/g,'\u064A');  // fix an issue with the ya encoding (persian for some reason)
-    
-    // this removes everything that isnt a main char, or a 
+
+    // fix an issue with the ya encoding
+    // (persian for some reason). Note this replaces all normal ya, but also the ya for alef layena.
+    //  so for something like فى it is written في. Not sure if this is fine, check with someone arabic literate
+    noTashkeel = noTashkeel.replace(/\u06CC/g,'\u064A');  
+
+    // this removes everything that isnt a main char, or a hamza above or below, or a spacebar
     noTashkeel = noTashkeel.replace(/[^\u0621-\u063A\u0641-\u064A\u0654-\u0655 ]/g, '');
     
-    // change the ya with hamza underneath to ya with hamza above as this is available on keyboard
+    // // change the ya with hamza underneath and to ya with hamza above as this is available on keyboard
     noTashkeel = noTashkeel.replace(/\u0649\u0655/g,'\u0626');
     return noTashkeel
 }
@@ -73,11 +77,15 @@ export function fillContainer(surahContent, container) {
     // turn each word into a span
     let words = surahContent.split(" ")
     console.log(words.join(" "));
+    
 
     words.forEach((word) => {
         let wordSpan = document.createElement("span");
         wordSpan.textContent = word + " "
         container.appendChild(wordSpan)
+
+        //temp
+        // console.log(word.split(""));
     });
 }
 
