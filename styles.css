@@ -1,4 +1,6 @@
 body {
+
+    font-family: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     display: flex;
     flex-direction: column;
     justify-content:space-between; /* Center the board horizontally on the page */
@@ -203,3 +205,4 @@ a {
 .display-none {
     display: none;
 }
+

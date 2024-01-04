@@ -28,7 +28,7 @@ function getSurah(surahNumber = 1, startAyah = 1, endAyah = 9999) {
     // Make an API request to fetch the Surah data
     $.ajax({
         // url: `http://api.alquran.cloud/v1/surah/${surahNumber}`,
-        url: `http://api.alquran.cloud/v1/surah/${surahNumber}?offset=${startAyah -1}&limit=${endAyah - 1}`,
+        url: `https://api.alquran.cloud/v1/surah/${surahNumber}?offset=${startAyah -1}&limit=${endAyah - 1}`,
 
         type: "GET",
         dataType: "json",
@@ -249,6 +249,8 @@ function handleInputButton(event) {
 }
 
 function processSearch(query) {
+    // TODO allow name search
+    // current functionality splits at ' ', ':', ',', and '-'
     const numbers = query.trim().split(/[\s,:-]+/).map(Number);
 
     switch (numbers.length) {
@@ -262,7 +264,7 @@ function processSearch(query) {
         getSurah(numbers[0], numbers[1], numbers[2])
         break;
       default:
-        console.log("No pattern matched");
+        alert("Please enter query in the format of a maximum of 3 numbers, seperated by spaces, commas, colons, or hyphens. ");
     }
 }
 

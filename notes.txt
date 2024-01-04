@@ -18,3 +18,5 @@ it only works from the start of the word. should be a simple index update
 can maybe make the animation smoother?
 
 maybe add some feature or popup or smth when all the words in the final row have been finished
+
+add surah name search
