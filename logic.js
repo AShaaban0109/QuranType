@@ -281,10 +281,12 @@ function addListeners() {
 
     // Add event listeners for typing
     inputElement.addEventListener("input", handleInput);
-    processButton.addEventListener("click", function() {
-        var inputValue = inputElement.value;
-        handleInputButton(inputValue);
-    });
+
+    // FOR DEBUGGING: Uncomment this and the button in the HTML
+    // processButton.addEventListener("click", function() {
+    //     var inputValue = inputElement.value;
+    //     handleInputButton(inputValue);
+    // });
 
     var surahInputElement = document.getElementById("Surah-selection-input");
     var surahProcessButton = document.getElementById("Display-Surah-button");
