@@ -102,8 +102,8 @@ a {
     /* flex: 1; */
 
     /* width: 100%; */
-    padding: 10px;
     /* margin-bottom: 15px; */
+    padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
@@ -156,8 +156,20 @@ a {
 }
 
 #inputField {
-    width: 700px; /* Adjust the width as needed */
+    width: 400px; /* Adjust the width as needed */
+    height: 65px; /* Adjust the height as needed */
+
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    
+    margin: 10px;
+    line-height: 5; 
+    font-family: 'Noto Naskh Arabic', serif;
+    font-size: 34px;
 }
+
 
 
 .configuration {

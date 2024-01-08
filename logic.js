@@ -141,9 +141,13 @@ function handleInput(event) {
     const quranContainer = document.getElementById("Quran-container");
     const wordSpans = quranContainer.querySelectorAll('span');
 
+    // TODO at some point have some sort of way of identifying the current word being looked at. 
+    // Eg. Have it a certain colour or smth.
+
     const noTashkeelContainer = document.getElementById("noTashkeelContainer");
     let quranText = noTashkeelContainer.childNodes[noTashkeelWordIndex].textContent 
 
+    const inputElement = document.getElementById("inputField");
     const inputText = event.data;
     const currentLetter = quranText[currentLetterIndex];
 
@@ -151,14 +155,26 @@ function handleInput(event) {
         const incorrectWord = wordSpans[mainQuranWordIndex]
         incorrectWord.style.color = "red"
     } else {
-        console.log(inputText);
-        currentLetterIndex++;
 
+        // TODO: This whole if else part needs a serious rearrangement
 
-        // next word
-        if (currentLetter === " ") {
+        // next word check
+        if (currentLetter !== " ") {
+            // console.log(inputElement.value);
+            currentLetterIndex++;    
+        } else {
+
+            if (inputElement.value !== quranText) {
+                return
+            }
+
             const correctWord = wordSpans[mainQuranWordIndex]
             correctWord.style.color = "green"
+
+            // clear the input box
+            inputElement.value = "";
+
+            
             
             // check if reached end of row
             if (mainQuranWordIndex === rowEndIndices[rowIndex]) {            
@@ -296,6 +312,11 @@ function addListeners() {
         var inputValue = surahInputElement.value;
         processSearch(inputValue)
     });
+
+    document.addEventListener("DOMContentLoaded", function() {
+        // Focus on the input box when the page is loaded
+        document.getElementById("inputField").focus();
+    });
 }
 
 // Init
@@ -307,4 +328,4 @@ function runApp(surahNumber = 1, startAyah = 1, endAyah = 999) {
     getSurah(surahNumber, startAyah, endAyah);
 }
 
-runApp(114)
+runApp(1)
