@@ -152,62 +152,168 @@ function displaySurahFromJson(data, startAyah, endAyah) {
 //     });
 // }
 
-function fillContainerWithRows(surahContent, container) {
-    utils.clearContainer(container)
-    let words = surahContent.split(" ")
-    let currentTopOffset = utils.getOriginalTopOffset(container)
+// function fillContainerWithRows(surahContent, container) {
+//     utils.clearContainer(container)
+//     let words = surahContent.split(" ")
+//     let currentTopOffset = utils.getOriginalTopOffset(container)
 
+//     let currentRow = document.createElement('div');
+//     currentRow.classList.add("row")
+//     rows.push(currentRow)
+//     container.appendChild(currentRow);
+
+//     let allWordSpans = []
+
+//     const processWords = async (startIndex) => {
+//         for (let wordIndex = startIndex; wordIndex < words.length; wordIndex++) {
+//             const word = words[wordIndex];
+
+//             await new Promise(resolve => setTimeout(resolve, 0)); // Introduce a small delay to yield to the event loop
+
+//             if (wordIndex >= words.length) {
+//                 // Check if the end of the word list has been reached
+//                 break;
+//             }
+
+//             const span = document.createElement('span');
+//             allWordSpans.push(span)
+//             span.textContent = word + ' ';
+//             span.classList.add("hidden")
+//             currentRow.appendChild(span);
+
+//             // Measure the offsetTop of the word span. If is greater than the current,
+//             // then span has been auto moved on to the next line. detect this and handle it.
+//             const offsetTop = span.offsetTop;
+//             if (offsetTop > currentTopOffset) {
+
+//                 // add the previous word as the last word in that row. 
+//                 // This can then be used to hide that row and 'scroll' to the next when that word is typed. 
+//                 rowEndIndices.push(wordIndex - 1)
+
+//                 currentRow.removeChild(span)
+
+//                 currentRow = document.createElement('div');
+//                 currentRow.classList.add("row")
+//                 rows.push(currentRow)
+//                 container.appendChild(currentRow);
+//                 currentRow.appendChild(span);
+
+//                 currentTopOffset = span.offsetTop;
+
+//                 // after 10 rows, unhide them at once, and let the rest be processed
+//                 if (rows.length === 10) {
+//                     allWordSpans.forEach(span => {
+//                         span.classList.remove("hidden");
+                
+//                     });
+//                     // Implement your logic here for handling the maximum number of rows
+//                     // You might want to display the finished rows and continue processing in the background
+//                     await new Promise(resolve => setTimeout(resolve, 0));
+//                 }
+//             }
+//         }
+//     };
+
+//     const startProcessing = async () => {
+//         await processWords(0); // Start processing from the beginning of the word list
+
+//         // unhide all spans after the processing has finished
+//         allWordSpans.forEach(span => {
+//             span.classList.remove("hidden");
+    
+//         });
+//         console.log("2");
+
+//     };
+
+//     startProcessing();
+// }
+
+function fillContainerWithRows(surahContent, container) {
+    // Clear the container before populating with rows
+    utils.clearContainer(container);
+
+    // Split the surah content into individual words
+    let words = surahContent.split(" ");
+
+    // Get the initial top offset of the container
+    let currentTopOffset = utils.getOriginalTopOffset(container);
+
+    // Create the initial row and add it to the container
     let currentRow = document.createElement('div');
-    currentRow.classList.add("row")
-    rows.push(currentRow)
+    currentRow.classList.add("row");
     container.appendChild(currentRow);
 
-    const processWords = async (startIndex) => {
-        for (let wordIndex = startIndex; wordIndex < words.length; wordIndex++) {
-            const word = words[wordIndex];
+    // Arrays to store spans, row end indices, and row elements
+    let allWordSpans = [];
+    let rowEndIndices = [];
+    let rows = [currentRow];
 
-            await new Promise(resolve => setTimeout(resolve, 0)); // Introduce a small delay to yield to the event loop
+    // Function to create a span element for a given word
+    const createSpan = (word) => {
+        const span = document.createElement('span');
+        allWordSpans.push(span);
+        span.textContent = word + ' ';
+        return span;
+    };
 
+    // Function to process a batch of words
+    const processBatch = async (startIndex, batchSize) => {
+        // Create a document fragment for efficient DOM manipulation
+        const fragment = document.createDocumentFragment();
+
+        // Iterate over the batch of words
+        for (let i = 0; i < batchSize; i++) {
+            const wordIndex = startIndex + i;
+
+            // Check if the end of the word list has been reached
             if (wordIndex >= words.length) {
-                // Check if the end of the word list has been reached
                 break;
             }
 
-            const span = document.createElement('span');
-            span.textContent = word + ' ';
-            currentRow.appendChild(span);
+            const word = words[wordIndex];
+            const span = createSpan(word);
+            
+            // Append the span to the document fragment
+            fragment.appendChild(span);
 
+            // Measure the offsetTop of the word span
             const offsetTop = span.offsetTop;
+
+            // Check if the word span has moved to the next line
             if (offsetTop > currentTopOffset) {
-                rowEndIndices.push(wordIndex - 1)
+                // Store the index of the last word in the current row
+                rowEndIndices.push(wordIndex - 1);
 
-                currentRow.removeChild(span)
-
+                // Create a new row and add it to the container
                 currentRow = document.createElement('div');
-                currentRow.classList.add("row")
-                rows.push(currentRow)
+                currentRow.classList.add("row");
                 container.appendChild(currentRow);
-                currentRow.appendChild(span);
+                rows.push(currentRow);
 
-                currentTopOffset = span.offsetTop;
+                // Append the current word span to the new row
+                currentRow.appendChild(createSpan(word));
 
-                if (MAX_ROWS < rows.length) {
-                    for (let r = 0; r < MAX_ROWS; r++) {
-                        // rows[r].
-                        
-                    }
-                    // Implement your logic here for handling the maximum number of rows
-                    // You might want to display the finished rows and continue processing in the background
-                    await new Promise(resolve => setTimeout(resolve, 0));
-                }
+                // Update the current top offset
+                currentTopOffset = offsetTop;
             }
+        }
+
+        // Append the document fragment to the container
+        container.appendChild(fragment);
+    };
+
+    // Function to start processing the words
+    const startProcessing = async () => {
+        const batchSize = 10; // Adjust the batch size as needed
+
+        // Process words in batches
+        for (let i = 0; i < words.length; i += batchSize) {
+            await processBatch(i, batchSize);
         }
     };
 
-    const startProcessing = async () => {
-        await processWords(0); // Start processing from the beginning of the word list
-    };
-
+    // Start the word processing
     startProcessing();
 }
 
@@ -373,7 +479,14 @@ function handleInputButton(event) {
     console.log(toPrint.join(""));
 }
 
+let currentQuery = "1"
 function processSearch(query) {
+    // to prevent constant clicking of search button, with the same query
+    if (currentQuery === query) {
+        return
+    } else {
+        currentQuery = query
+    }
     // TODO allow name search
     // current functionality splits at ' ', ':', ',', and '-'
     const numbers = query.trim().split(/[\s,:-]+/).map(Number);
