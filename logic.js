@@ -7,7 +7,7 @@ const QURAN_SYMBOLS = ["۞‎", "﴾","﴿", "۩‎"]
 const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
 let isDarkMode = localStorage.getItem('darkMode') === 'enabled' || prefersDarkMode;
 
-let MAX_ROWS = 5
+let MAX_ROWS = 6
 
 let rows = []
 let rowEndIndices = []
@@ -86,55 +86,164 @@ function displaySurahFromJson(data, startAyah, endAyah) {
 
   // Wait for fonts to load then fill container. Fixes offsetTop issue
   document.fonts.ready.then(function () {
-        // Your code using offsetTop here
+        // The code using offsetTop here
         fillContainerWithRows(surahContent, quranContainer);
     });
     
+    var startTime = performance.now();
+
+
     // create new hidden div with no tashkeel to match with the typing
     const noTashkeel = utils.createNoTashkeelString(noTashkeelAyahs)
     const hiddenDiv = document.getElementById('noTashkeelContainer');
     utils.fillContainer(noTashkeel, hiddenDiv)
+
+    var endTime = performance.now();
+    var duration = endTime - startTime;
+    console.log("AJAX request duration: " + duration + " milliseconds");
+
 }
+
+// function fillContainerWithRows(surahContent, container) {
+//     utils.clearContainer(container)
+//     let words = surahContent.split(" ")
+//     let currentTopOffset = utils.getOriginalTopOffset(container)
+
+
+//     let currentRow = document.createElement('div');
+//     currentRow.classList.add("row")
+//     rows.push(currentRow)
+//     container.appendChild(currentRow);
+
+//     words.forEach((word, wordIndex) => {
+//         const span = document.createElement('span');
+//         span.textContent = word + ' ';
+//         currentRow.appendChild(span);
+
+//         // Measure the offsetTop of the word span. If is greater than the current,
+//         // then span has been auto moved on to the next line. detect this and handle it.
+//         const offsetTop = span.offsetTop;
+//         if (offsetTop > currentTopOffset) {
+
+//             // add the previous word as the last word in that row. 
+//             // This can then be used to hide that row and 'scroll' to the next when that word is typed. 
+//             rowEndIndices.push(wordIndex - 1)
+
+//             currentRow.removeChild(span)
+
+//             currentRow = document.createElement('div');
+//             currentRow.classList.add("row")
+//             rows.push(currentRow)
+//             container.appendChild(currentRow);
+//             currentRow.appendChild(span); // Add the word to the new row
+            
+//             currentTopOffset = span.offsetTop; // Reset the topOffset for the new row
+            
+//             // Optional
+//             // if (MAX_ROWS < rows.length) {
+//             //     currentRow.classList.add("hidden")
+//             // }
+
+//             if (MAX_ROWS < rows.length) {
+//                 processRemainingRows(words, wordIndex, currentRow, currentTopOffset);
+//                 return
+//             }
+//         }
+//     });
+// }
 
 function fillContainerWithRows(surahContent, container) {
     utils.clearContainer(container)
     let words = surahContent.split(" ")
     let currentTopOffset = utils.getOriginalTopOffset(container)
 
-
     let currentRow = document.createElement('div');
     currentRow.classList.add("row")
     rows.push(currentRow)
     container.appendChild(currentRow);
 
-    words.forEach((word, wordIndex) => {
-        const span = document.createElement('span');
-        span.textContent = word + ' ';
-        currentRow.appendChild(span);
+    const processWords = async (startIndex) => {
+        for (let wordIndex = startIndex; wordIndex < words.length; wordIndex++) {
+            const word = words[wordIndex];
 
-        // Measure the offsetTop of the word span. If is greater than the current,
-        // then span has been auto moved on to the next line. detect this and handle it.
-        const offsetTop = span.offsetTop;
-        if (offsetTop > currentTopOffset) {
+            await new Promise(resolve => setTimeout(resolve, 0)); // Introduce a small delay to yield to the event loop
 
-            // add the previous word as the last word in that row. 
-            // This can then be used to hide that row and 'scroll' to the next when that word is typed. 
-            rowEndIndices.push(wordIndex - 1)
+            if (wordIndex >= words.length) {
+                // Check if the end of the word list has been reached
+                break;
+            }
 
-            currentRow.removeChild(span)
+            const span = document.createElement('span');
+            span.textContent = word + ' ';
+            currentRow.appendChild(span);
 
-            currentRow = document.createElement('div');
-            currentRow.classList.add("row")
-            rows.push(currentRow)
-            container.appendChild(currentRow);
-            currentRow.appendChild(span); // Add the word to the new row
-            
-            currentTopOffset = span.offsetTop; // Reset the topOffset for the new row
-            if (MAX_ROWS < rows.length) {
-                // currentRow.classList.add("hidden")
+            const offsetTop = span.offsetTop;
+            if (offsetTop > currentTopOffset) {
+                rowEndIndices.push(wordIndex - 1)
+
+                currentRow.removeChild(span)
+
+                currentRow = document.createElement('div');
+                currentRow.classList.add("row")
+                rows.push(currentRow)
+                container.appendChild(currentRow);
+                currentRow.appendChild(span);
+
+                currentTopOffset = span.offsetTop;
+
+                if (MAX_ROWS < rows.length) {
+                    for (let r = 0; r < MAX_ROWS; r++) {
+                        // rows[r].
+                        
+                    }
+                    // Implement your logic here for handling the maximum number of rows
+                    // You might want to display the finished rows and continue processing in the background
+                    await new Promise(resolve => setTimeout(resolve, 0));
+                }
             }
         }
-    });
+    };
+
+    const startProcessing = async () => {
+        await processWords(0); // Start processing from the beginning of the word list
+    };
+
+    startProcessing();
+}
+
+
+function processRemainingRows(words, startIndex, currentRow, currentTopOffset) {
+    // Implement asynchronous processing of remaining rows
+    // For example, you can use setTimeout to simulate asynchronous behavior
+    setTimeout(() => {
+        for (let i = startIndex; i < words.length; i++) {
+            // Process each word or perform other background tasks
+            const span = document.createElement('span');
+            span.textContent = words[i] + ' ';
+            currentRow.appendChild(span);
+    
+            // Measure the offsetTop of the word span. If is greater than the current,
+            // then span has been auto moved on to the next line. detect this and handle it.
+            const offsetTop = span.offsetTop;
+            if (offsetTop > currentTopOffset) {
+    
+                // add the previous word as the last word in that row. 
+                // This can then be used to hide that row and 'scroll' to the next when that word is typed. 
+                rowEndIndices.push(wordIndex - 1)
+    
+                currentRow.removeChild(span)
+    
+                currentRow = document.createElement('div');
+                currentRow.classList.add("row")
+                rows.push(currentRow)
+                container.appendChild(currentRow);
+                currentRow.appendChild(span); // Add the word to the new row
+                
+                currentTopOffset = span.offsetTop; // Reset the topOffset for the new row
+                
+            }
+        }
+    }, 0);
 }
 
 function handleInput(event) {
