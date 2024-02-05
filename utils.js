@@ -40,6 +40,19 @@ export function removeTashkeel(text) {
     return noTashkeel
 }
 
+export function applyIncorrectWordStyle(incorrectWord) {
+    incorrectWord.style.color = "red";
+}
+
+export function applyCorrectWordStyle(correctWord) {
+    correctWord.style.color = "green";
+
+    // Unhide word if hidden due to hideWords button. (The working is none, delete hidden later)
+    if (correctWord.style.display === 'hidden' || correctWord.style.display === 'none') {
+        correctWord.style.display = "inline";
+    }
+}
+
 // quick insert and removal to get the true span offsetTop value
 export function getOriginalTopOffset(container) {
     const testRow = document.createElement('div');
@@ -51,6 +64,29 @@ export function getOriginalTopOffset(container) {
     testRow.removeChild(temp)
     container.removeChild(testRow)
     return currentTopOffset
+}
+
+export function handleOffsetTop(wordSpans, wordToCheck, originalTopOffset) {
+    // Measure the offsetTop of the word span. If is greater than the current,
+    // then span has been auto moved on to the next line. detect this and handle it.
+    const offsetTop = wordToCheck.offsetTop;
+    if (offsetTop > originalTopOffset) {
+        handleHiddenWords(wordSpans, wordToCheck);
+    }
+}
+
+export function handleHiddenWords(wordSpans, referenceSpan) {
+    let foundReference = false;
+
+    wordSpans.forEach(function (span) {
+        if (!foundReference) {
+            if (span === referenceSpan) {
+                foundReference = true;
+            } else {
+                span.style.display = 'none';
+            }
+        }
+    });
 }
 
 export function clearContainer(container) {
@@ -76,7 +112,7 @@ export function fillContainer(surahContent, container) {
 
     // turn each word into a span
     let words = surahContent.split(" ")
-    console.log(words.join(" "));
+    // console.log(words.join(" "));
     
 
     words.forEach((word) => {
@@ -117,7 +153,11 @@ export default {
     convertToArabicNumber,
     createNoTashkeelString,
     removeTashkeel,
+    applyIncorrectWordStyle,
+    applyCorrectWordStyle,
     getOriginalTopOffset,
+    handleOffsetTop,
+    handleHiddenWords,
     clearContainer,
     getTransitionDuration,
     fillContainer,

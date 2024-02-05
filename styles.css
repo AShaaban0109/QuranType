@@ -138,6 +138,7 @@ a {
 
     font-family: 'Noto Naskh Arabic', serif;
     /* font-size: 42px; */
+    /* font-size: 80px; */
     font-size: 34px;
 
 }
@@ -230,3 +231,11 @@ a {
     display: none;
 }
 
+
+#Quran-input-container {
+    display: flex;
+}
+
+#hideAyahsButton {
+    margin:10px
+}

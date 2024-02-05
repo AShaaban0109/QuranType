@@ -7,24 +7,24 @@ const QURAN_SYMBOLS = ["۞‎", "﴾","﴿", "۩‎"]
 const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
 let isDarkMode = localStorage.getItem('darkMode') === 'enabled' || prefersDarkMode;
 
-let MAX_ROWS = 6
 
-let rows = []
-let rowEndIndices = []
-let rowIndex = 0
 let currentLetterIndex = 0
 let mainQuranWordIndex = 0 // this will be one ahead of notashkeet due to the ayah numbers
 let noTashkeelWordIndex = 0
+let ayahNumberIndices = [-1]
+
+
+let originalTopOffset = 0  // for detecting autoscroll to next line
+let currentSearchQuery = "1"
+
 
 // Function to retrieve and populate a Surah into the div
 function getSurah(surahNumber = 1, startAyah = 1, endAyah = 9999) {
     // clear everything
-    rowIndex = 0
-    rows = []
-    rowEndIndices = []
     currentLetterIndex = 0
     mainQuranWordIndex = 0
     noTashkeelWordIndex = 0
+    ayahNumberIndices = [-1]
     // Make an API request to fetch the Surah data
     $.ajax({
         // url: `http://api.alquran.cloud/v1/surah/${surahNumber}`,
@@ -89,341 +89,114 @@ function displaySurahFromJson(data, startAyah, endAyah) {
         // The code using offsetTop here
         fillContainerWithRows(surahContent, quranContainer);
     });
-    
-    var startTime = performance.now();
-
 
     // create new hidden div with no tashkeel to match with the typing
     const noTashkeel = utils.createNoTashkeelString(noTashkeelAyahs)
     const hiddenDiv = document.getElementById('noTashkeelContainer');
     utils.fillContainer(noTashkeel, hiddenDiv)
-
-    var endTime = performance.now();
-    var duration = endTime - startTime;
-    console.log("AJAX request duration: " + duration + " milliseconds");
-
 }
-
-// function fillContainerWithRows(surahContent, container) {
-//     utils.clearContainer(container)
-//     let words = surahContent.split(" ")
-//     let currentTopOffset = utils.getOriginalTopOffset(container)
-
-
-//     let currentRow = document.createElement('div');
-//     currentRow.classList.add("row")
-//     rows.push(currentRow)
-//     container.appendChild(currentRow);
-
-//     words.forEach((word, wordIndex) => {
-//         const span = document.createElement('span');
-//         span.textContent = word + ' ';
-//         currentRow.appendChild(span);
-
-//         // Measure the offsetTop of the word span. If is greater than the current,
-//         // then span has been auto moved on to the next line. detect this and handle it.
-//         const offsetTop = span.offsetTop;
-//         if (offsetTop > currentTopOffset) {
-
-//             // add the previous word as the last word in that row. 
-//             // This can then be used to hide that row and 'scroll' to the next when that word is typed. 
-//             rowEndIndices.push(wordIndex - 1)
-
-//             currentRow.removeChild(span)
-
-//             currentRow = document.createElement('div');
-//             currentRow.classList.add("row")
-//             rows.push(currentRow)
-//             container.appendChild(currentRow);
-//             currentRow.appendChild(span); // Add the word to the new row
-            
-//             currentTopOffset = span.offsetTop; // Reset the topOffset for the new row
-            
-//             // Optional
-//             // if (MAX_ROWS < rows.length) {
-//             //     currentRow.classList.add("hidden")
-//             // }
-
-//             if (MAX_ROWS < rows.length) {
-//                 processRemainingRows(words, wordIndex, currentRow, currentTopOffset);
-//                 return
-//             }
-//         }
-//     });
-// }
-
-// function fillContainerWithRows(surahContent, container) {
-//     utils.clearContainer(container)
-//     let words = surahContent.split(" ")
-//     let currentTopOffset = utils.getOriginalTopOffset(container)
-
-//     let currentRow = document.createElement('div');
-//     currentRow.classList.add("row")
-//     rows.push(currentRow)
-//     container.appendChild(currentRow);
-
-//     let allWordSpans = []
-
-//     const processWords = async (startIndex) => {
-//         for (let wordIndex = startIndex; wordIndex < words.length; wordIndex++) {
-//             const word = words[wordIndex];
-
-//             await new Promise(resolve => setTimeout(resolve, 0)); // Introduce a small delay to yield to the event loop
-
-//             if (wordIndex >= words.length) {
-//                 // Check if the end of the word list has been reached
-//                 break;
-//             }
-
-//             const span = document.createElement('span');
-//             allWordSpans.push(span)
-//             span.textContent = word + ' ';
-//             span.classList.add("hidden")
-//             currentRow.appendChild(span);
-
-//             // Measure the offsetTop of the word span. If is greater than the current,
-//             // then span has been auto moved on to the next line. detect this and handle it.
-//             const offsetTop = span.offsetTop;
-//             if (offsetTop > currentTopOffset) {
-
-//                 // add the previous word as the last word in that row. 
-//                 // This can then be used to hide that row and 'scroll' to the next when that word is typed. 
-//                 rowEndIndices.push(wordIndex - 1)
-
-//                 currentRow.removeChild(span)
-
-//                 currentRow = document.createElement('div');
-//                 currentRow.classList.add("row")
-//                 rows.push(currentRow)
-//                 container.appendChild(currentRow);
-//                 currentRow.appendChild(span);
-
-//                 currentTopOffset = span.offsetTop;
-
-//                 // after 10 rows, unhide them at once, and let the rest be processed
-//                 if (rows.length === 10) {
-//                     allWordSpans.forEach(span => {
-//                         span.classList.remove("hidden");
-                
-//                     });
-//                     // Implement your logic here for handling the maximum number of rows
-//                     // You might want to display the finished rows and continue processing in the background
-//                     await new Promise(resolve => setTimeout(resolve, 0));
-//                 }
-//             }
-//         }
-//     };
-
-//     const startProcessing = async () => {
-//         await processWords(0); // Start processing from the beginning of the word list
-
-//         // unhide all spans after the processing has finished
-//         allWordSpans.forEach(span => {
-//             span.classList.remove("hidden");
-    
-//         });
-//         console.log("2");
-
-//     };
-
-//     startProcessing();
-// }
 
 function fillContainerWithRows(surahContent, container) {
-    // Clear the container before populating with rows
     utils.clearContainer(container);
+    originalTopOffset = utils.getOriginalTopOffset(container)
 
-    // Split the surah content into individual words
     let words = surahContent.split(" ");
-
-    // Get the initial top offset of the container
-    let currentTopOffset = utils.getOriginalTopOffset(container);
-
-    // Create the initial row and add it to the container
-    let currentRow = document.createElement('div');
-    currentRow.classList.add("row");
-    container.appendChild(currentRow);
-
-    // Arrays to store spans, row end indices, and row elements
-    let allWordSpans = [];
-    let rowEndIndices = [];
-    let rows = [currentRow];
-
-    // Function to create a span element for a given word
-    const createSpan = (word) => {
+    words.forEach((word) => {
         const span = document.createElement('span');
-        allWordSpans.push(span);
         span.textContent = word + ' ';
-        return span;
-    };
-
-    // Function to process a batch of words
-    const processBatch = async (startIndex, batchSize) => {
-        // Create a document fragment for efficient DOM manipulation
-        const fragment = document.createDocumentFragment();
-
-        // Iterate over the batch of words
-        for (let i = 0; i < batchSize; i++) {
-            const wordIndex = startIndex + i;
-
-            // Check if the end of the word list has been reached
-            if (wordIndex >= words.length) {
-                break;
-            }
-
-            const word = words[wordIndex];
-            const span = createSpan(word);
-            
-            // Append the span to the document fragment
-            fragment.appendChild(span);
-
-            // Measure the offsetTop of the word span
-            const offsetTop = span.offsetTop;
-
-            // Check if the word span has moved to the next line
-            if (offsetTop > currentTopOffset) {
-                // Store the index of the last word in the current row
-                rowEndIndices.push(wordIndex - 1);
-
-                // Create a new row and add it to the container
-                currentRow = document.createElement('div');
-                currentRow.classList.add("row");
-                container.appendChild(currentRow);
-                rows.push(currentRow);
-
-                // Append the current word span to the new row
-                currentRow.appendChild(createSpan(word));
-
-                // Update the current top offset
-                currentTopOffset = offsetTop;
-            }
-        }
-
-        // Append the document fragment to the container
-        container.appendChild(fragment);
-    };
-
-    // Function to start processing the words
-    const startProcessing = async () => {
-        const batchSize = 10; // Adjust the batch size as needed
-
-        // Process words in batches
-        for (let i = 0; i < words.length; i += batchSize) {
-            await processBatch(i, batchSize);
-        }
-    };
-
-    // Start the word processing
-    startProcessing();
-}
-
-
-function processRemainingRows(words, startIndex, currentRow, currentTopOffset) {
-    // Implement asynchronous processing of remaining rows
-    // For example, you can use setTimeout to simulate asynchronous behavior
-    setTimeout(() => {
-        for (let i = startIndex; i < words.length; i++) {
-            // Process each word or perform other background tasks
-            const span = document.createElement('span');
-            span.textContent = words[i] + ' ';
-            currentRow.appendChild(span);
-    
-            // Measure the offsetTop of the word span. If is greater than the current,
-            // then span has been auto moved on to the next line. detect this and handle it.
-            const offsetTop = span.offsetTop;
-            if (offsetTop > currentTopOffset) {
-    
-                // add the previous word as the last word in that row. 
-                // This can then be used to hide that row and 'scroll' to the next when that word is typed. 
-                rowEndIndices.push(wordIndex - 1)
-    
-                currentRow.removeChild(span)
-    
-                currentRow = document.createElement('div');
-                currentRow.classList.add("row")
-                rows.push(currentRow)
-                container.appendChild(currentRow);
-                currentRow.appendChild(span); // Add the word to the new row
-                
-                currentTopOffset = span.offsetTop; // Reset the topOffset for the new row
-                
-            }
-        }
-    }, 0);
+        container.appendChild(span);
+    });
 }
 
 function handleInput(event) {
     const quranContainer = document.getElementById("Quran-container");
     const wordSpans = quranContainer.querySelectorAll('span');
 
-    // TODO at some point have some sort of way of identifying the current word being looked at. 
-    // Eg. Have it a certain colour or smth.
-
     const noTashkeelContainer = document.getElementById("noTashkeelContainer");
-    let quranText = noTashkeelContainer.childNodes[noTashkeelWordIndex].textContent 
+    const quranText = noTashkeelContainer.childNodes[noTashkeelWordIndex].textContent;
 
-    const inputElement = document.getElementById("inputField");
     const inputText = event.data;
     const currentLetter = quranText[currentLetterIndex];
 
     if (inputText !== currentLetter) {
-        const incorrectWord = wordSpans[mainQuranWordIndex]
-        incorrectWord.style.color = "red"
+        utils.applyIncorrectWordStyle(wordSpans[mainQuranWordIndex])
     } else {
+        handleCorrectInput(wordSpans, quranText);
+    }
+}
 
-        // TODO: This whole if else part needs a serious rearrangement
+function handleCorrectInput(wordSpans, quranText) {
+    const currentLetter = quranText[currentLetterIndex];
+    const correctWord = wordSpans[mainQuranWordIndex];
 
-        // next word check
-        if (currentLetter !== " ") {
-            // console.log(inputElement.value);
-            currentLetterIndex++;    
+    // Check if current letter is not a space (Next word check)
+    if (currentLetter !== " ") {
+        currentLetterIndex++;
+    } else {
+        // otherwise we handle the correct word
+        const inputElement = document.getElementById("inputField");
+        if (inputElement.value !== quranText) {
+            return;
+        }
+    
+        utils.applyCorrectWordStyle(correctWord)
+        inputElement.value = "";
+        handleNextWord(wordSpans);
+    }
+}
+
+function handleNextWord(wordSpans) {
+    currentLetterIndex = 0;
+    mainQuranWordIndex++;
+    noTashkeelWordIndex++;
+
+    utils.handleOffsetTop(wordSpans, wordSpans[mainQuranWordIndex], originalTopOffset);
+    handleEndOfAyahCheck(wordSpans);
+}
+
+
+// Check if the next word is an ayah number. Handle if so.
+function handleEndOfAyahCheck(wordSpans) {
+    const endOfAyah = wordSpans[mainQuranWordIndex];
+    if (QURAN_SYMBOLS.some(char => endOfAyah.textContent.includes(char))) {
+        ayahNumberIndices.push(mainQuranWordIndex)
+        utils.applyCorrectWordStyle(endOfAyah)
+        mainQuranWordIndex++
+    }
+}
+
+let isHideAyahsButtonActive = false
+
+function handleHideAyahsButton(event) {
+    // Toggle the visibility state
+    isHideAyahsButtonActive = !isHideAyahsButtonActive;
+    
+    const quranContainer = document.getElementById("Quran-container");
+    const wordSpans = quranContainer.querySelectorAll('span');
+    
+    // clear
+    wordSpans.forEach(span => {
+        span.style.display = 'hidden';
+      });
+      
+
+    let mostRecentAyahNumIndex = ayahNumberIndices[ayahNumberIndices.length - 1]
+    let beforeMostRecentAyahNumIndex = ayahNumberIndices[ayahNumberIndices.length - 1]
+    if (ayahNumberIndices.length !==1) {
+         beforeMostRecentAyahNumIndex = ayahNumberIndices[ayahNumberIndices.length - 2]
+    }
+
+    for (let i = beforeMostRecentAyahNumIndex + 1; i < wordSpans.length; i++) {
+        const word = wordSpans[i];
+        if (isHideAyahsButtonActive) {
+            // If non-green text is currently visible, hide it
+            if (word.style.color !== "green") {
+                word.style.display = "none"; // or any other way to hide the element
+            }
         } else {
+            // If non-green text is currently hidden, show it
+            word.style.display = "inline"; // or any other way to show the element
 
-            if (inputElement.value !== quranText) {
-                return
-            }
-
-            const correctWord = wordSpans[mainQuranWordIndex]
-            correctWord.style.color = "green"
-
-            // clear the input box
-            inputElement.value = "";
-
-            
-            
-            // check if reached end of row
-            if (mainQuranWordIndex === rowEndIndices[rowIndex]) {            
-                let transitionDuration = utils.getTransitionDuration(rows[0]); // Fetch transition duration
-
-                rows[rowIndex].classList.add("hidden")
-                setTimeout(function() {
-                    rows[rowIndex].classList.add("display-none")
-                    rowIndex++
-                  }, transitionDuration);
-            }
-
-            
-            currentLetterIndex = 0
-            mainQuranWordIndex++
-            noTashkeelWordIndex++
-
-            // check if next word is ayah number
-            const endOfAyah = wordSpans[mainQuranWordIndex]
-            if (QURAN_SYMBOLS.some(char => endOfAyah.textContent.includes(char)  )) {
-                // ugly fix. change later. dupicated code above
-                // check if reached end of row
-                if (mainQuranWordIndex === rowEndIndices[rowIndex]) {            
-                    let transitionDuration = utils.getTransitionDuration(rows[0]); // Fetch transition duration
-
-                    rows[rowIndex].classList.add("hidden")
-                    setTimeout(function() {
-                        rows[rowIndex].classList.add("display-none")
-                        rowIndex++
-                    }, transitionDuration);
-                }
-
-                mainQuranWordIndex++
-            }
         }
     }
 }
@@ -431,7 +204,6 @@ function handleInput(event) {
 // helper function for now. for testing
 // todo refactor this and the other button to make them nicer
 function handleInputButton(event) {
-    rowIndex = 0
     mainQuranWordIndex = 0
     noTashkeelWordIndex = 0
     newCurrentLetterIndex = 0
@@ -476,16 +248,15 @@ function handleInputButton(event) {
             }
         }
     }
-    console.log(toPrint.join(""));
+    // console.log(toPrint.join(""));
 }
 
-let currentQuery = "1"
 function processSearch(query) {
     // to prevent constant clicking of search button, with the same query
-    if (currentQuery === query) {
+    if (currentSearchQuery === query) {
         return
     } else {
-        currentQuery = query
+        currentSearchQuery = query
     }
     // TODO allow name search
     // current functionality splits at ' ', ':', ',', and '-'
@@ -512,6 +283,12 @@ function addListeners() {
     darkModeButton.addEventListener('click', function() {
         isDarkMode = utils.toggleDarkMode(isDarkMode)
     });
+
+    // Adding event listener for hide ayahs toggle
+    const hideAyahsButton = document.getElementById('hideAyahsButton');
+    hideAyahsButton.addEventListener('click', handleHideAyahsButton);
+
+    // isDarkMode = utils.toggleDarkMode(isDarkMode)
 
 
     var inputElement = document.getElementById("inputField");
