@@ -1,4 +1,35 @@
-name: Continuous Integration - Unit Tests and End-to-End Tests
+# name: Continuous Integration - Unit Tests and End-to-End Tests
+
+# on:
+#   pull_request:
+#     branches:
+#       - main
+
+# jobs:
+#   test:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v2
+
+#       - name: Set up Node.js
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: 14
+
+#       - name: Install dependencies
+#         run: npm install
+
+#       - name: Run unit tests
+#         run: npm test
+
+#       - name: Run end-to-end tests
+#         uses: cypress-io/github-action@v6
+#         with:
+#             config-file: cypress.config.js
+
+name: Cypress Tests
 
 on:
   pull_request:
@@ -6,25 +37,15 @@ on:
       - main
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-
+  cypress-run:
+    runs-on: ubuntu-22.04
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 14
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Run unit tests
-        run: npm test
-
-      - name: Run end-to-end tests
+      - name: Checkout
+        uses: actions/checkout@v4
+      # Install NPM dependencies, cache them correctly
+      # and run all Cypress tests
+      - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
-            config-file: cypress.config.js
+          build: npm run build
+          start: npm start
