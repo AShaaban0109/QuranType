@@ -9,7 +9,7 @@ describe('Input Field Test', () => {
       cy.wait(2000);
 
       // Type some text into the input field
-      const expectedText = 'بسم ';
+      const expectedText = 'بم ';
       cy.get('#inputField').type(expectedText);
   
       // Get the text from the input field and assert it
