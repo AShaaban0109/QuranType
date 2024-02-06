@@ -20,3 +20,10 @@ can maybe make the animation smoother?
 maybe add some feature or popup or smth when all the words in the final row have been finished
 
 add surah name search
+
+"test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",    this fixed everything
+
+TODO:
+Change it so if surah number is searched again, after the user has done some work,
+the surah gets refreshed and all the green gets cleared for them to restart.
+
