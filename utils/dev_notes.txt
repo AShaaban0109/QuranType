@@ -26,9 +26,3 @@ add surah name search
 TODO:
 Change it so if surah number is searched again, after the user has done some work,
 the surah gets refreshed and all the green gets cleared for them to restart.
-
-
-TODO TMRW:
-Get the cypress tests working - just get the url problem solved.
-get the unit tests working with cypress by changing yml file.
-go work on wordle
