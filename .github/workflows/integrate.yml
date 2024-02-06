@@ -1,17 +1,25 @@
-name: Node Continuous Integration
+name: CI
 
 on:
-    pull_request:
-        branches: [ master ]
+  pull_request:
+    branches:
+      - main
 
 jobs:
-    test_pull_request:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v2
-            - uses: actions/setup-node@v1
-              with:
-                node-version: 12
-            - run: npm ci
-            - run: npm test
-            - run: npm run build
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 14
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Run tests
+      run: npm test
