@@ -6,7 +6,7 @@ describe('Input Field Test', () => {
         .should('exist')
 
       // Wait for the API call to be received and the container to be populated
-      cy.wait(2000);
+      cy.wait(3000);
 
       // Type some text into the input field
       const expectedText = 'بسم ';
