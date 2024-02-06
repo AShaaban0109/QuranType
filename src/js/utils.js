@@ -2,7 +2,7 @@ export function convertToArabicNumber(englishNumber) {
     englishNumber = englishNumber.toString()
 
     const arabicNumbers = ["٠", "١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩"];
-    const englishDigits = "0123456789";
+    const englishDigits = "0213456789";
     const englishToArabicMap = {};
   
     for (let i = 0; i < englishDigits.length; i++) {
