@@ -29,22 +29,40 @@
 #         with:
 #             config-file: cypress.config.js
 
-name: Cypress Tests
+# name: Cypress Tests
 
+# on:
+#   pull_request:
+#     branches:
+#       - main
+
+# jobs:
+#   cypress-run:
+#     runs-on: ubuntu-22.04
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v4
+#       # Install NPM dependencies, cache them correctly
+#       # and run all Cypress tests
+#       - name: Cypress run
+#         uses: cypress-io/github-action@v6
+#         with:
+#           start: npm start
+
+name: example-basic
+# This workflow represents a set of basic End-to-End tests
 on:
   pull_request:
     branches:
       - main
 
 jobs:
-  cypress-run:
-    runs-on: ubuntu-22.04
+
+  basic-ubuntu-20:
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      # Install NPM dependencies, cache them correctly
-      # and run all Cypress tests
-      - name: Cypress run
+
+      - name: Cypress tests
         uses: cypress-io/github-action@v6
-        with:
-          start: npm start
