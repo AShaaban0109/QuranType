@@ -1,6 +1,6 @@
 describe('Input Field Test', () => {
     it('should wipe the input field after a correct word has been written and the spacebar pressed', () => {
-      cy.visit('http://localhost:5501');
+      cy.visit('/');
   
       cy.get('#inputField')
         .should('exist')
