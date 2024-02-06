@@ -1,6 +1,6 @@
 /.vscode
 /node_modules
-cypress.config.js
+# cypress.config.js
 cypress/downloads
 cypress/e2e/1-getting-started
 cypress/e2e/2-advanced-examples
