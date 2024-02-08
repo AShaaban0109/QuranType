@@ -94,6 +94,7 @@ function displaySurahFromJson(data, startAyah, endAyah) {
     const noTashkeel = utils.createNoTashkeelString(noTashkeelAyahs)
     const hiddenDiv = document.getElementById('noTashkeelContainer');
     utils.fillContainer(noTashkeel, hiddenDiv)
+    // console.log(noTashkeel);
 }
 
 function fillContainerWithRows(surahContent, container) {

@@ -26,3 +26,5 @@ add surah name search
 TODO:
 Change it so if surah number is searched again, after the user has done some work,
 the surah gets refreshed and all the green gets cleared for them to restart.
+
+Add more unit and e2e tests.
