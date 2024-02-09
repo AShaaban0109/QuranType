@@ -48,8 +48,8 @@ export function applyCorrectWordStyle(correctWord) {
     correctWord.style.color = "green";
 
     // Unhide word if hidden due to hideWords button. (The working is none, delete hidden later)
-    if (correctWord.style.display === 'hidden' || correctWord.style.display === 'none') {
-        correctWord.style.display = "inline";
+    if (correctWord.style.visibility === 'hidden') {
+        correctWord.style.visibility = "visible";
     }
 }
 
@@ -66,15 +66,6 @@ export function getOriginalTopOffset(container) {
     return currentTopOffset
 }
 
-export function handleOffsetTop(wordSpans, wordToCheck, originalTopOffset) {
-    // Measure the offsetTop of the word span. If is greater than the current,
-    // then span has been auto moved on to the next line. detect this and handle it.
-    const offsetTop = wordToCheck.offsetTop;
-    if (offsetTop > originalTopOffset) {
-        handleHiddenWords(wordSpans, wordToCheck);
-    }
-}
-
 export function handleHiddenWords(wordSpans, referenceSpan) {
     let foundReference = false;
 
@@ -84,6 +75,7 @@ export function handleHiddenWords(wordSpans, referenceSpan) {
                 foundReference = true;
             } else {
                 span.style.display = 'none';
+                // span.remove()
             }
         }
     });
@@ -156,7 +148,6 @@ export default {
     applyIncorrectWordStyle,
     applyCorrectWordStyle,
     getOriginalTopOffset,
-    handleOffsetTop,
     handleHiddenWords,
     clearContainer,
     getTransitionDuration,

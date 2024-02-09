@@ -151,10 +151,32 @@ function handleNextWord(wordSpans) {
     mainQuranWordIndex++;
     noTashkeelWordIndex++;
 
-    utils.handleOffsetTop(wordSpans, wordSpans[mainQuranWordIndex], originalTopOffset);
+    handleOffsetTop(wordSpans, wordSpans[mainQuranWordIndex]);
     handleEndOfAyahCheck(wordSpans);
 }
 
+let secondRowTopOffset = 0
+let refWord = ""
+function handleOffsetTop(wordSpans, wordToCheck) {
+    // Measure the offsetTop of the word span. If is greater than the current,
+    // then span has been auto moved on to the next line. detect this and handle it.
+    const offsetTop = wordToCheck.offsetTop;
+
+    // TODO: ugly code. Rethink this and refactor it. Basically it now autoscrolls when the second row has been filled.
+    if (offsetTop > originalTopOffset) {
+        if (secondRowTopOffset === 0 && refWord === "") {
+            secondRowTopOffset = offsetTop
+            refWord = wordToCheck
+        }
+        if (offsetTop > secondRowTopOffset) {
+            utils.handleHiddenWords(wordSpans, refWord);
+
+            // reset
+            secondRowTopOffset = 0
+            refWord=""
+        }
+    }
+}
 
 // Check if the next word is an ayah number. Handle if so.
 function handleEndOfAyahCheck(wordSpans) {
@@ -168,39 +190,62 @@ function handleEndOfAyahCheck(wordSpans) {
 
 let isHideAyahsButtonActive = false
 
+// function handleHideAyahsButton(event) {
+//     // Toggle the visibility state
+//     isHideAyahsButtonActive = !isHideAyahsButtonActive;
+    
+//     const quranContainer = document.getElementById("Quran-container");
+//     const wordSpans = quranContainer.querySelectorAll('span');
+    
+//     // clear
+//     wordSpans.forEach(span => {
+//         span.style.display = 'hidden';
+//       });
+      
+
+//     let mostRecentAyahNumIndex = ayahNumberIndices[ayahNumberIndices.length - 1]
+//     let beforeMostRecentAyahNumIndex = ayahNumberIndices[ayahNumberIndices.length - 1]
+//     if (ayahNumberIndices.length !==1) {
+//          beforeMostRecentAyahNumIndex = ayahNumberIndices[ayahNumberIndices.length - 2]
+//     }
+
+//     for (let i = beforeMostRecentAyahNumIndex + 1; i < wordSpans.length; i++) {
+//         const word = wordSpans[i];
+//         if (isHideAyahsButtonActive) {
+//             // If non-green text is currently visible, hide it
+//             if (word.style.color !== "green") {
+//                 word.style.display = "none"; // or any other way to hide the element
+//             }
+//         } else {
+//             // If non-green text is currently hidden, show it
+//             word.style.display = "inline"; // or any other way to show the element
+
+//         }
+//     }
+// }
+
 function handleHideAyahsButton(event) {
     // Toggle the visibility state
     isHideAyahsButtonActive = !isHideAyahsButtonActive;
     
     const quranContainer = document.getElementById("Quran-container");
     const wordSpans = quranContainer.querySelectorAll('span');
-    
-    // clear
-    wordSpans.forEach(span => {
-        span.style.display = 'hidden';
-      });
-      
 
-    let mostRecentAyahNumIndex = ayahNumberIndices[ayahNumberIndices.length - 1]
-    let beforeMostRecentAyahNumIndex = ayahNumberIndices[ayahNumberIndices.length - 1]
-    if (ayahNumberIndices.length !==1) {
-         beforeMostRecentAyahNumIndex = ayahNumberIndices[ayahNumberIndices.length - 2]
-    }
-
-    for (let i = beforeMostRecentAyahNumIndex + 1; i < wordSpans.length; i++) {
-        const word = wordSpans[i];
-        if (isHideAyahsButtonActive) {
-            // If non-green text is currently visible, hide it
-            if (word.style.color !== "green") {
-                word.style.display = "none"; // or any other way to hide the element
+    if (isHideAyahsButtonActive) {
+        wordSpans.forEach(span => {
+            if (span.style.display !== 'none' && span.style.color !== 'green') {
+                span.style.visibility = 'hidden';
             }
-        } else {
-            // If non-green text is currently hidden, show it
-            word.style.display = "inline"; // or any other way to show the element
-
-        }
+          });
+    } else {
+        wordSpans.forEach(span => {
+            if (span.style.display !== 'none' ) {
+                span.style.visibility = 'visible';
+            }
+          });
     }
 }
+
 
 // helper function for now. for testing
 // todo refactor this and the other button to make them nicer
