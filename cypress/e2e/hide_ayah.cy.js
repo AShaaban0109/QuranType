@@ -7,25 +7,40 @@ describe('Input Field Test', () => {
     it('should remove and un-remove all words when the Hide Ayahs button is clicked', () => {
       cy.get('#hideAyahsButton').click();
       cy.get("#Quran-container span").each(($span) => {
-        cy.wrap($span).should('have.css', 'display', 'none');
+        // Get the computed style of the span
+        cy.wrap($span).invoke('css', 'color').then((color) => {
+            if (color === 'rgb(0, 128, 0)') {
+                cy.wrap($span).should('have.css', 'visibility', 'visible');
+            } else {
+                cy.wrap($span).should('have.css', 'visibility', 'hidden');
+            }
+        });
       });
-
+      
       cy.get('#hideAyahsButton').click();
       cy.get("#Quran-container span").each(($span) => {
-        cy.wrap($span).should('not.have.css', 'display', 'none');
+        cy.wrap($span).should('have.css', 'display', 'inline');
       });
     });
 
-    // it("should work with a surah that doesn't fully fit in the container", () => {
-    //     let chosenSurah = 96  // Al-Alaq
-    //     cy.get('#Surah-selection-input').type(chosenSurah)
-    //     cy.get('#Display-Surah-button').click()
-    //     cy.wait(3000); 
-    //     cy.get('#noTashkeelContainer').invoke('text').then(fullSurah => {
-    //         cy.get('#inputField').type(fullSurah);
-    //          // Select just the last span element for quicker computation
-    //         cy.get("#Quran-container span").last().should('have.css', 'color', 'rgb(0, 128, 0)');
-    //     });
-    // });
+    it('should still work when text has been entered and some words are green', () => {
+        const expectedText = 'بسم الله الرحمان الرحيم الحمد لله رب العالمين الرحمان الرحيم مالك يوم الدين إياك نعبد وإياك نستعين اهدنا الصراط المستقيم صراط الذين أنعمت عليهم غير المغضوب عليهم ولا الضالين ';
+        cy.get('#inputField').type(expectedText);
+        cy.get('#hideAyahsButton').click();
+
+        cy.get("#Quran-container span").each(($span) => {
+            cy.wrap($span).invoke('css', 'display').then((display) => {
+                // if display is none, the span is not on the screen and we don't need to check visibility
+                if (display !== 'none') {
+                    cy.wrap($span).invoke('css', 'color').then((color) => {
+                        if (color === 'rgb(0, 128, 0)') {
+                            cy.wrap($span).should('have.css', 'visibility', 'visible');
+                        }
+                    });
+                    cy.wrap($span).should('have.css', 'visibility', 'visible');
+                }
+            });
+          });
+      });
   });
   

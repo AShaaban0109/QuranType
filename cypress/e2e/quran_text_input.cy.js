@@ -2,7 +2,7 @@ describe('Input Field Test', () => {
     beforeEach(() => {
       cy.visit('/');
       cy.get('#inputField').should('exist');
-      cy.wait(3000); // Wait for the API call to be received and the container to be populated
+      cy.wait(1000); // Wait for the API call to be received and the container to be populated
     });
   
     it('should wipe the input field after a correct word has been written and the spacebar pressed', () => {
@@ -21,10 +21,10 @@ describe('Input Field Test', () => {
     });
 
     it("should work with a surah that doesn't fully fit in the container", () => {
-        let chosenSurah = 96  // Al-Alaq
+        let chosenSurah = 96  // Al-Alaqremove and un-remove all words when the Hide Ayahs button is clicked
         cy.get('#Surah-selection-input').type(chosenSurah)
         cy.get('#Display-Surah-button').click()
-        cy.wait(3000); 
+        cy.wait(2000); 
         cy.get('#noTashkeelContainer').invoke('text').then(fullSurah => {
             cy.get('#inputField').type(fullSurah);
              // Select just the last span element for quicker computation
