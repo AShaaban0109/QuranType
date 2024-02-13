@@ -1,112 +1,88 @@
 import utils from './utils.js';
 
-const BASMALLA = "بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ"
-const QURAN_SYMBOLS = ["۞‎", "﴾","﴿", "۩‎", 'ۖ', 'ۗ', 'ۘ', 'ۙ', 'ۚ', ' ۛ' , 'ۜ', 'ۛ ']
-let PROPERTIES_OF_SURAHS = null
+const BASMALLA = "بِسۡمِ ٱللَّهِ ٱلرَّحۡمَـٰنِ ٱلرَّحِیمِ"
+const QURAN_SYMBOLS = ["۞‎", "﴾","﴿", "۩‎"]
 
 // Check for saved dark mode preference
 const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
 let isDarkMode = localStorage.getItem('darkMode') === 'enabled' || prefersDarkMode;
 
-let isHideAyahsButtonActive = false
-let currentSearchQuery = "1"
 
 let currentLetterIndex = 0
 let mainQuranWordIndex = 0 // this will be one ahead of notashkeet due to the ayah numbers
 let noTashkeelWordIndex = 0
-
-// for detecting autoscroll to next line
-let originalTopOffset = 0 
-let secondRowTopOffset = 0
-let refWord = ""
+let ayahNumberIndices = [-1]
 
 
-async function setupSurahData() {
-    const baseApiUrl = 'https://api.quran.com/api/v4';
-    const url = `${baseApiUrl}/chapters`;
-    
-    try {
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error('Failed to fetch surah data');
-        }
-        PROPERTIES_OF_SURAHS = await response.json();
-    } catch (error) {
-        console.error('Error fetching surah data:', error);
-    }
-}
+let originalTopOffset = 0  // for detecting autoscroll to next line
+let currentSearchQuery = "1"
 
-// TODO: Update params for other functions
-// Function to fetch Quran verses in imlaei script
-async function getSurah(surahNumber, startAyah, script) {
+
+// Function to retrieve and populate a Surah into the div
+function getSurah(surahNumber = 1, startAyah = 1, endAyah = 9999) {
     // clear everything
     currentLetterIndex = 0
     mainQuranWordIndex = 0
     noTashkeelWordIndex = 0
+    ayahNumberIndices = [-1]
+    // Make an API request to fetch the Surah data
+    $.ajax({
+        // url: `http://api.alquran.cloud/v1/surah/${surahNumber}`,
+        url: `https://api.alquran.cloud/v1/surah/${surahNumber}?offset=${startAyah -1}&limit=${endAyah - 1}`,
 
-    // Constructing the URL with query parameters
-    const baseApiUrl = 'https://api.quran.com/api/v4';
-    const url = `${baseApiUrl}/quran/verses/${script}?chapter_number=${surahNumber}`;
-    
-    try {
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error('Failed to fetch verses');
+        type: "GET",
+        dataType: "json",
+
+        success: function (data) {
+            if (endAyah > data.data.numberOfAyahs) {
+                endAyah = data.data.numberOfAyahs
+            }
+            // console.log(data.data);
+            displaySurahFromJson(data, startAyah, endAyah)
+        },
+        error: function (error) {
+            console.log("Error:", error);
         }
-        const data = await response.json();
-        displaySurahFromJson(data, startAyah, script)
-    } catch (error) {
-        console.error('Error fetching verses:', error);
-    }
-}
-
-function processAyah(text) {
-    let ayah = text
-
-    // handle iqlab. 
-    ayah = ayah.replace(/\u064B\u06E2/g, '\u064E\u06E2'); // fathateen then meen, to fatha then meen.
-    ayah = ayah.replace(/\u064C\u06E2/g, '\u064F\u06E2'); // dammateen then meen, to damma then meen.
-    ayah = ayah.replace(/\u064D\u06ED/g, '\u0650\u06ED'); // kasrateen then meen, to kasra then meen.
-
-    return ayah
-}
-
-function processData(data, startAyah, script) {
-    const textProp = "text_" + script
-    // fixes issue of all surahs except the first starting with a space, which messes up the indexing
-    if (data.verses[0][textProp].startsWith(' ')) {
-        data.verses[0][textProp] = data.verses[0][textProp].trim();
-    }
-
-    // only return verses the user requested
-    data.verses = data.verses.slice(startAyah -1)
-    return data
+    });
 }
 
 // Extract and display the Surah content from the API response
-function displaySurahFromJson(data, startAyah, script) {
+function displaySurahFromJson(data, startAyah, endAyah) {
     const quranContainer = document.getElementById("Quran-container");
     const surahName = document.getElementById("Surah-name");
     const BasmallahContainer = document.getElementById("Basmallah");
     
-    data = processData(data, startAyah, script)
     let noTashkeelAyahs = []
-
-    let surahContent = data.verses.map(function (ayah, i) {
-        const arabicNumber = utils.convertToArabicNumber(startAyah + i)
-        const processedAyah = processAyah(ayah["text_" + script])
+    let surahContent = data.data.ayahs.map(function (ayah) {
+        const arabicNumber = utils.convertToArabicNumber(ayah.numberInSurah )
+        const processedAyah = ayah.text.replace("\n", "")  // remove this if want to log on new lines 
         noTashkeelAyahs.push(processedAyah)
-        
+
         return `${processedAyah} ﴿${arabicNumber}﴾`;
+          
     }).join(" ");
 
-    const chapterNumber = data.meta.filters.chapter_number -1 
-    surahName.textContent = "سورة " + PROPERTIES_OF_SURAHS.chapters[chapterNumber].name_arabic
 
-    const isThereABasmalah = PROPERTIES_OF_SURAHS.chapters[chapterNumber].bismillah_pre
-    if (isThereABasmalah) {
-        BasmallahContainer.textContent = BASMALLA;
-    }
+    surahName.textContent =  data.data.name
+
+    // // handle Basmallah in all surahs except 1:Al-Fatiha, and 9:Al-Tawba
+    switch (data.data.number) {
+      case 1:
+          BasmallahContainer.textContent = "";
+          break;
+  
+      case 9:
+          BasmallahContainer.textContent = "";
+          break;
+  
+      default:
+          BasmallahContainer.textContent = BASMALLA;
+
+          if (startAyah==1) {
+              surahContent = surahContent.slice(40);
+              noTashkeelAyahs[0] = noTashkeelAyahs[0].slice(40);
+          }
+  }
 
   // Wait for fonts to load then fill container. Fixes offsetTop issue
   document.fonts.ready.then(function () {
@@ -142,6 +118,7 @@ function handleInput(event) {
 
     const inputText = event.data;
     const currentLetter = quranText[currentLetterIndex];
+
     if (inputText !== currentLetter) {
         utils.applyIncorrectWordStyle(wordSpans[mainQuranWordIndex])
     } else {
@@ -175,46 +152,77 @@ function handleNextWord(wordSpans) {
     noTashkeelWordIndex++;
 
     handleOffsetTop(wordSpans, wordSpans[mainQuranWordIndex]);
-    handleEndOfAyahCheck(wordSpans);    
+    handleEndOfAyahCheck(wordSpans);
 }
 
-// Measure the offsetTop of the word span. If is greater than the current,
-// then span has been auto moved on to the next line. detect this and handle it.
-// Autoscrolls when the second row has been filled.
+let secondRowTopOffset = 0
+let refWord = ""
 function handleOffsetTop(wordSpans, wordToCheck) {
+    // Measure the offsetTop of the word span. If is greater than the current,
+    // then span has been auto moved on to the next line. detect this and handle it.
     const offsetTop = wordToCheck.offsetTop;
 
+    // TODO: ugly code. Rethink this and refactor it. Basically it now autoscrolls when the second row has been filled.
     if (offsetTop > originalTopOffset) {
-        // one time operation to set the secondRowTopOffset for use in later detections.
-        if (secondRowTopOffset === 0) {
+        if (secondRowTopOffset === 0 && refWord === "") {
             secondRowTopOffset = offsetTop
             refWord = wordToCheck
         }
-
         if (offsetTop > secondRowTopOffset) {
             utils.handleHiddenWords(wordSpans, refWord);
-            refWord=wordToCheck
+
+            // reset
+            secondRowTopOffset = 0
+            refWord=""
         }
     }
 }
 
 // Check if the next word is an ayah number. Handle if so.
-// This also handles presencs of special chars like the stop marks.
-// This is because in this implementation they are rendered as seperate spans.
 function handleEndOfAyahCheck(wordSpans) {
-    let endOfAyah = wordSpans[mainQuranWordIndex];
-    console.log(endOfAyah);
-    while (QURAN_SYMBOLS.some(char => endOfAyah.textContent.includes(char))) {
+    const endOfAyah = wordSpans[mainQuranWordIndex];
+    if (QURAN_SYMBOLS.some(char => endOfAyah.textContent.includes(char))) {
+        ayahNumberIndices.push(mainQuranWordIndex)
         utils.applyCorrectWordStyle(endOfAyah)
         mainQuranWordIndex++
-
-        endOfAyah = wordSpans[mainQuranWordIndex];
-        // if there is a next word
-        if (endOfAyah !== undefined) {
-            handleOffsetTop(wordSpans, wordSpans[mainQuranWordIndex]);
-        }
     }
 }
+
+let isHideAyahsButtonActive = false
+
+// function handleHideAyahsButton(event) {
+//     // Toggle the visibility state
+//     isHideAyahsButtonActive = !isHideAyahsButtonActive;
+    
+//     const quranContainer = document.getElementById("Quran-container");
+//     const wordSpans = quranContainer.querySelectorAll('span');
+    
+//     // clear
+//     wordSpans.forEach(span => {
+//         span.style.display = 'hidden';
+//       });
+      
+
+//     let mostRecentAyahNumIndex = ayahNumberIndices[ayahNumberIndices.length - 1]
+//     let beforeMostRecentAyahNumIndex = ayahNumberIndices[ayahNumberIndices.length - 1]
+//     if (ayahNumberIndices.length !==1) {
+//          beforeMostRecentAyahNumIndex = ayahNumberIndices[ayahNumberIndices.length - 2]
+//     }
+
+//     for (let i = beforeMostRecentAyahNumIndex + 1; i < wordSpans.length; i++) {
+//         const word = wordSpans[i];
+//         if (isHideAyahsButtonActive) {
+//             // If non-green text is currently visible, hide it
+//             if (word.style.color !== "green") {
+//                 word.style.display = "none"; // or any other way to hide the element
+//             }
+//         } else {
+//             // If non-green text is currently hidden, show it
+//             word.style.display = "inline"; // or any other way to show the element
+
+//         }
+//     }
+// }
 
 function handleHideAyahsButton(event) {
     // Toggle the visibility state
@@ -238,6 +246,57 @@ function handleHideAyahsButton(event) {
     }
 }
 
+
+// helper function for now. for testing
+// todo refactor this and the other button to make them nicer
+function handleInputButton(event) {
+    mainQuranWordIndex = 0
+    noTashkeelWordIndex = 0
+    newCurrentLetterIndex = 0
+    
+    const quranContainer = document.getElementById("Quran-container");
+    const wordSpans = quranContainer.querySelectorAll('span');
+
+
+    const noTashkeelContainer = document.getElementById("noTashkeelContainer");
+    let quranText = noTashkeelContainer.childNodes[noTashkeelWordIndex].textContent 
+    
+    quranContainer.childNodes.forEach(node => {
+        node.style.color = document.body.style.color
+    });
+
+    let currentLetter = quranText[newCurrentLetterIndex];
+    let toPrint = []
+    for (let i = 0; i < event.length; i++) {
+        currentLetter = quranText[newCurrentLetterIndex]
+        if (event[i] === currentLetter) {
+            toPrint.push(currentLetter);            
+            newCurrentLetterIndex++
+        } else {
+            const incorrectWord = wordSpans[mainQuranWordIndex]
+            incorrectWord.style.color = "red"            
+        }
+        // next word
+        if (currentLetter === " ") {
+            const correctWord = wordSpans[mainQuranWordIndex]
+            correctWord.style.color = "green"
+            
+            newCurrentLetterIndex = 0
+            mainQuranWordIndex++
+            noTashkeelWordIndex++
+            quranText = noTashkeelContainer.childNodes[noTashkeelWordIndex].textContent 
+
+
+            // check if next word is ayah number
+            const endOfAyah = wordSpans[mainQuranWordIndex]
+            if (QURAN_SYMBOLS.some(char => endOfAyah.textContent.includes(char)  )) {
+                mainQuranWordIndex++
+            }
+        }
+    }
+    // console.log(toPrint.join(""));
+}
+
 function processSearch(query) {
     // to prevent constant clicking of search button, with the same query
     if (currentSearchQuery === query) {
@@ -251,13 +310,13 @@ function processSearch(query) {
 
     switch (numbers.length) {
       case 1:
-        getSurah(numbers[0], 1, 'uthmani')
+        getSurah(numbers[0])
         break;
       case 2:
-        getSurah(numbers[0], numbers[1], 'uthmani')
+        getSurah(numbers[0], numbers[1])
         break;
       case 3:
-        getSurah(numbers[0], numbers[1], numbers[2], 'uthmani')
+        getSurah(numbers[0], numbers[1], numbers[2])
         break;
       default:
         alert("Please enter query in the format of a maximum of 3 numbers, seperated by spaces, commas, colons, or hyphens. ");
@@ -284,6 +343,12 @@ function addListeners() {
     // Add event listeners for typing
     inputElement.addEventListener("input", handleInput);
 
+    // FOR DEBUGGING: Uncomment this and the button in the HTML
+    // processButton.addEventListener("click", function() {
+    //    var inputValue = inputElement.value;
+    //    handleInputButton(inputValue);
+    // });
+
     var surahInputElement = document.getElementById("Surah-selection-input");
     var surahProcessButton = document.getElementById("Display-Surah-button");
 
@@ -300,13 +365,12 @@ function addListeners() {
 }
 
 // Init
-function runApp(surahNumber = 1, startAyah = 1, script='uthmani') {
+function runApp(surahNumber = 1, startAyah = 1, endAyah = 999) {
     utils.initDarkMode(isDarkMode)
     addListeners()
-    setupSurahData()
 
     // Call the function to get and populate the Surah when the page loads
-    getSurah(surahNumber, startAyah, script);
+    getSurah(surahNumber, startAyah, endAyah);
 }
 
 runApp(1)

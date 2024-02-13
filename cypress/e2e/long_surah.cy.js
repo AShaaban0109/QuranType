@@ -1,7 +1,7 @@
 describe('Input Field Test', () => {
     beforeEach(() => {
       cy.visit('/');
-      cy.wait(3000); // Wait for the API call to be received and the container to be populated
+      cy.wait(2000); // Wait for the API call to be received and the container to be populated
     });
 
     it('should work with longer surahs', () => {

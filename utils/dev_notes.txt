@@ -28,3 +28,29 @@ Change it so if surah number is searched again, after the user has done some wor
 the surah gets refreshed and all the green gets cleared for them to restart.
 
 Add more unit and e2e tests.
+
+Mobile optimation and seo
+
+change the alert to a toast
+
+incorporate tab order to change it so the user tabs from the input part to the hide button instead of going to contact us
+
+LATER: make big screens better
+The upper limit is a little harder to clarify. These days super-duper-ultra-wide monitors aren’t uncommon, so you should plan for the possibility that your site could be viewed on some ridiculously wide monitor. Often, this is accomplished by setting up a max-width for all of your content and then centering that on the page. With a setup like that your content will look fine even on super-wide resolutions.
+
+
+
+IMPORTANT: When wake up. Look at the fonts again. Choose a nice font, and make the small edit to the alef. get a fresh folder from the zip file.
+
+
+VERY IMPORTANT: Raise the issue of the incorrect text on the api site to the devs.
+https://alquran.cloud/surah/1
+Ayah 2 renders on the site with incorrect tashkeel.
+possibly other issues as well
+
+
+NEW API STUFF FOR NOW:
+Figure out ya encoding. Might be fine or might be an issue. do some research and understand it.
+sort out certain text not formatting properly like kasreteen then meen. DONE. Check if there is anything else like that.
+check if there is something wrong with copy and pasting from log of no tashkeel into the input box
+handle 

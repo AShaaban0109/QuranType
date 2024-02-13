@@ -40,12 +40,7 @@ body {
 }
 
 h1 {
-    /* font-family: 'Great Vibes', cursive; */
-    /* font-family: 'Parisienne', cursive; */
-    /* font-family: 'Caveat', cursive; */
-    /* font-family: 'Tangerine', cursive; */
-    /* font-family: 'Josefin Sans', sans-serif; */
-
+    /* TODO: Use a logo instead of fonts maybe? */
     font-family: 'Dancing Script', cursive;
     font-size: 3em; /* Maybe change this */
     margin: 0px;
@@ -128,6 +123,24 @@ a {
     background-color: #0056b3;
   }
 
+  @font-face {
+    font-family: 'IslamicFonts';
+    src: local('IslamicFonts'), /* Local reference */
+         url('../../public/fonts/UthmanTN_v2-0.woff2') format('woff2'), /* Modern Browsers */
+         url('../../public/fonts/UthmanTN_v2-0.woff') format('woff'), /* Less modern Browsers */
+         url('../../public/fonts/UthmanTN_v2-0.ttf') format('ttf'); /* Safari, Android and iOS */
+  }
+
+  /* TODO */
+  @font-face {
+    font-family: 'IslamicFont';
+    src: local('IslamicFont'), /* Local reference */
+        /* url('../../public/fonts/TODO.woff2') format('woff2'), Modern Browsers */
+        /* url('../../public/fonts/TODO.ttf') format('ttf'); Safari, Android and iOS */
+         url('../../public/fonts/UthmaniHafs.woff') format('woff'); /* Less modern Browsers */
+  }
+
+
 #Quran-container {
     /* removed flex for now cos it messes up whitespace for copy and pasting divs */
     /* display: flex; */
@@ -135,13 +148,15 @@ a {
     /* text-align: right; */
     /* align-items: center; */
 
-    width: 800px; /* Set the fixed width of the board */
-    height: 348px; /* Set the fixed height of the board */
+    height: 361px; /* Set the fixed height of the board */
+
+    min-width: 300px;
+    max-width: 800px;
 
     /* overflow: auto; */
     overflow: hidden;
 
-    font-family: 'Noto Naskh Arabic', serif;
+    font-family: 'IslamicFont', sans-serif;  
     /* font-size: 42px; */
     /* font-size: 80px; */
     font-size: 34px;
@@ -154,11 +169,14 @@ a {
 }
 
 #Surah-details {
-    font-family: 'Noto Naskh Arabic', serif;
+    font-family: 'IslamicFont', sans-serif;  
     font-size:22px;
     display: flex;
     flex-direction: column;
     align-items: center;
+
+    margin-bottom: 10px;
+
 }
 
 #inputField {
@@ -172,7 +190,7 @@ a {
     
     margin: 10px;
     line-height: 5; 
-    font-family: 'Noto Naskh Arabic', serif;
+    font-family: 'IslamicFont', sans-serif;  
     font-size: 34px;
 }
 
