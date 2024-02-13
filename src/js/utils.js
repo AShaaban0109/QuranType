@@ -18,7 +18,13 @@ export function convertToArabicNumber(englishNumber) {
 
 export function createNoTashkeelString(noTashkeelAyahs) {
     noTashkeelAyahs = noTashkeelAyahs.map((ayah) => removeTashkeel(ayah))
-    return noTashkeelAyahs.join(" ")
+
+    let processedString = noTashkeelAyahs.join(" ")
+
+    // This handles an issue with \u06D6-\u06DE (the stop signs). They become spaces when removed.
+    // This results in 2 consecutive spaces. This is replaced with one space using this code.
+    processedString = processedString.replace(/\s{2,}/g, ' ');
+    return processedString
 }
 
 export function removeTashkeel(text) {
@@ -33,10 +39,12 @@ export function removeTashkeel(text) {
     noTashkeel = noTashkeel.replace(/\u06CC/g,'\u064A');  
 
     // this removes everything that isnt a main char, or a hamza above or below, or a spacebar
+    // noTashkeel = noTashkeel.replace(/[^\u0621-\u063A\u0641-\u064A\u0654-\u0655 ]/g, '');
     noTashkeel = noTashkeel.replace(/[^\u0621-\u063A\u0641-\u064A\u0654-\u0655 ]/g, '');
     
     // // change the ya with hamza underneath and to ya with hamza above as this is available on keyboard
     noTashkeel = noTashkeel.replace(/\u0649\u0655/g,'\u0626');
+
     return noTashkeel
 }
 

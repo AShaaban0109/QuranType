@@ -1,7 +1,7 @@
 describe('Input Field Test', () => {
     beforeEach(() => {
       cy.visit('/');
-      cy.wait(1000); // Wait for the API call to be received and the container to be populated
+      cy.wait(2000); // Wait for the API call to be received and the container to be populated
     });
   
     it('should remove and un-remove all words when the Hide Ayahs button is clicked', () => {

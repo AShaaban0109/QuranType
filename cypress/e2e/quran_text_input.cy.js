@@ -2,7 +2,7 @@ describe('Input Field Test', () => {
     beforeEach(() => {
       cy.visit('/');
       cy.get('#inputField').should('exist');
-      cy.wait(1000); // Wait for the API call to be received and the container to be populated
+      cy.wait(2000); // Wait for the API call to be received and the container to be populated
     });
   
     it('should wipe the input field after a correct word has been written and the spacebar pressed', () => {
