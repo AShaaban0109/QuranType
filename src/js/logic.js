@@ -303,10 +303,15 @@ function addListeners() {
 function runApp(surahNumber = 1, startAyah = 1, script='uthmani') {
     utils.initDarkMode(isDarkMode)
     addListeners()
-    setupSurahData()
 
-    // Call the function to get and populate the Surah when the page loads
-    getSurah(surahNumber, startAyah, script);
+    setupSurahData()
+    .then(() => {
+        // Call the function to get and populate the Surah when the page loads
+        getSurah(surahNumber, startAyah, script);
+    })
+    .catch(error => {
+        console.error('Error displaying verses:', error);
+    });
 }
 
 runApp(1)

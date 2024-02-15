@@ -44,6 +44,7 @@ h1 {
     font-family: 'Dancing Script', cursive;
     font-size: 3em; /* Maybe change this */
     margin: 0px;
+    margin: 0px 30px 0px ;
   }
 
 #headerRight {
@@ -57,7 +58,7 @@ h1 {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    flex: 1;
+    /* flex: 1; */
 
     direction: rtl;
 }
@@ -148,10 +149,16 @@ a {
     /* text-align: right; */
     /* align-items: center; */
 
-    height: 361px; /* Set the fixed height of the board */
+
+    /* TODO Basically each row is 60px (with font size of 34px). Not sure yet how many rows looks the best. */
+    /* TODO Maybe also have it so it changes dynamically based on user preference? */
+    /* height: 361px; For 6 rows. */
+    height: 241px; /* For 4 rows */
 
     min-width: 300px;
     max-width: 800px;
+
+    margin: 0px 20px 0px 10px;
 
     /* overflow: auto; */
     overflow: hidden;
@@ -180,7 +187,8 @@ a {
 }
 
 #inputField {
-    width: 400px; /* Adjust the width as needed */
+    min-width: 200px;
+    max-width: 400px;
     height: 65px; /* Adjust the height as needed */
 
     padding: 10px;
@@ -219,8 +227,11 @@ a {
 
 #light-mode-icon,
 #dark-mode-icon {
-    width: 48px;
-    height: 48px;
+    /* width: 48px;
+    height: 48px; */
+
+    width: 37px;
+    height: 37px;
 }
 
 
@@ -257,8 +268,22 @@ a {
 
 #Quran-input-container {
     display: flex;
+    justify-content: center;
 }
 
 #hideAyahsButton {
     margin:10px
+}
+
+
+
+@media screen and (max-width: 500px) {
+    #header {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    #Quran-input-container {
+        max-width: 250px
+    }
 }
