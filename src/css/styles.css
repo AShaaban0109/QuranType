@@ -1,3 +1,107 @@
+root {
+    transition: background-color 0.3s ease;
+
+}
+
+/* Light Theme */
+:root.light {
+    --background-color: #f5f5f5; 
+    --text-color: #111111;
+
+    --correct-word-color: #008000;
+    --incorrect-word-color: #e10000;
+
+    --button-text-color: #ffffff;
+    --button-background-color: #1473e6;
+    --button-background-color-hovered: #0D66D0;
+
+    --anchor-color: #515154;
+    --anchor-color-hovered: #333333;
+
+    --input-border-color: #d6d6d6; 
+    --input-background-color: #fafafa;
+    --input-text-color: #111111; 
+    --input-placeholder-color: #838383; 
+}
+
+/* Dark Theme */
+:root.dark {
+    --background-color: #333333; 
+    --text-color: #ffffff; 
+
+    --correct-word-color: #00e500;
+    --incorrect-word-color: #ff8100;
+
+    --button-text-color: #ffffff;
+    --button-background-color: #1473e6;
+    --button-background-color-hovered: #0D66D0;
+
+    --anchor-color: #c7c7c7;
+    --anchor-color-hovered: #ffffff;
+
+    --input-border-color: #d6d6d6;
+    --input-background-color: #444;
+    --input-text-color: #ffffff;
+    --input-placeholder-color: #d6d6d6;
+
+}
+
+
+
+/* TODO add different themes. */
+
+/* A collection of themes I liked:
+
+:root.light {
+    --background-color: #F2EDD7; 
+    --text-color: #755139;
+
+    --button-text-color: #F2EDD7;
+    --button-background-color: #755139;
+    --button-background-color-hovered: #5a3d29;
+
+    --anchor-color: #755139;
+    --anchor-color-hovered: #5a3d29;
+}
+
+:root.light {
+    --background-color: #D7C49E; 
+    --text-color: #343148;
+
+    --button-text-color: #D7C49E;
+    --button-background-color: #343148;
+    --button-background-color-hovered: #5a3d29;
+
+    --anchor-color: #262223;
+    --anchor-color-hovered: #5a3d29;
+}
+
+:root.light {
+    --background-color: #DDC6B6; 
+    --text-color: #262223;
+
+    --button-text-color: #DDC6B6;
+    --button-background-color: #262223;
+    --button-background-color-hovered: #5a3d29;
+
+    --anchor-color: #262223;
+    --anchor-color-hovered: #5a3d29;
+}
+
+I like this theme.  This could be one of them.
+:root.light {
+    --background-color: #F3EFEA; 
+    --text-color: #331E05;
+
+    --button-text-color: #F3EFEA;
+    --button-background-color: #785429;
+    --button-background-color-hovered: #63441d;
+
+    --anchor-color: #785429;
+    --anchor-color-hovered: #63441d;
+}
+*/
+
 body {
 
     font-family: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
@@ -8,31 +112,12 @@ body {
     min-height: 100vh;
     
     transition: background-color 0.3s ease;
-
-
-
-    background-color: #323437; /* Dark Theme */
-    background-color: #f5f5f5; /* Light Theme */
     
-    color: #bec1c4; /* Light Theme */
-    color: #333;    /* Dark Theme */
-    
-
-    
-    /* stuff i commented out for some reason*/
-
-    /* max-height: 100vh; */
-    /* Center the board vertically on the page */
-    /* align-items: center; */
-    /* margin-bottom: 10px; */
-    /* display: block; */
-    /* width: 100%;
-    height: 100%; */
-    /* overflow-x: hidden; */
-    /* padding: 0; */
+    color: var(--text-color);
+    background: var(--background-color);
 }
 
-#header {
+header {
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -63,7 +148,7 @@ h1 {
     direction: rtl;
 }
 
-#footer {
+footer {
     font-size: small;
     margin-top: 50px;
     margin-bottom: 10px;
@@ -74,55 +159,63 @@ h1 {
 }
 
 a {
-    color: #007bff; /* Blue color, you can change this to any color value you prefer */
-    text-decoration: none; /* Remove underline, you can customize this based on your design */
-  }
+    color: var(--anchor-color);
+    text-decoration: none; 
 
-  /* Change the color of links when hovered */
-  a:hover {
-    color: #004080; /* Darker blue color on hover, adjust as needed */
-  }
+}
 
-  #searchContainer {
+a:hover {
+    color: var(--anchor-color-hovered);
+    text-decoration: underline;
+}
+
+#searchContainer {
     display: flex;
     gap: 5px;
-    /* align-self: flex-end; Align this item to the bottom of the container */
-    
-    /* align-items: center; */
-    /* justify-content: center; */
-    
-    /* background-color: #fff; */
-    /* padding: 20px; */
-    /* border-radius: 8px; */
-    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
-  }
+}
 
-  
+/* Apply input styles */
+input {
+    border: 1px solid var(--input-border-color);
+    background-color: var(--input-background-color);
+    color: var(--input-text-color);
 
-  input[type="search"] {
-    /* flex: 1; */
-
-    /* width: 100%; */
-    /* margin-bottom: 15px; */
     padding: 10px;
-    border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
-  }
+}
 
-  button {
-    background-color: #007bff;
-    color: #fff;
+/* Apply placeholder styles */
+input::placeholder {
+    color: var(--input-placeholder-color);
+}
+
+#inputField {
+    min-width: 200px;
+    max-width: 400px;
+    height: 65px; /* Adjust the height as needed */
+
+    margin: 10px;
+    line-height: 5; 
+    font-family: 'IslamicFont', sans-serif;  
+    font-size: 34px;
+}
+
+
+button {
+
+    background-color: var(--button-background-color);
+    color: var(--button-text-color);
     padding: 10px 15px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s;
-  }
+}
 
-  button:hover {
-    background-color: #0056b3;
-  }
+button:hover {
+    background-color: var(--button-background-color-hovered);
+}
 
   @font-face {
     font-family: 'IslamicFonts';
@@ -168,6 +261,14 @@ a {
     /* font-size: 80px; */
     font-size: 34px;
 
+}
+
+.correctWord {
+    color: var(--correct-word-color);
+}
+
+.incorrectWord {
+    color: var(--incorrect-word-color);
 }
 
 
@@ -275,10 +376,19 @@ a {
     margin:10px
 }
 
-
+.visually-hidden {
+    position: absolute !important;
+    clip: rect(1px, 1px, 1px, 1px);
+    padding: 0 !important;
+    border: 0 !important;
+    height: 1px !important;
+    width: 1px !important;
+    overflow: hidden;
+    white-space: nowrap;
+}
 
 @media screen and (max-width: 500px) {
-    #header {
+    header {
         flex-direction: column;
         gap: 20px;
     }

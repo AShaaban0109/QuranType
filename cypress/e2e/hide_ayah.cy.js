@@ -8,8 +8,11 @@ describe('Input Field Test', () => {
       cy.get('#hideAyahsButton').click();
       cy.get("#Quran-container span").each(($span) => {
         // Get the computed style of the span
-        cy.wrap($span).invoke('css', 'color').then((color) => {
-            if (color === 'rgb(0, 128, 0)') {
+        cy.wrap($span).invoke('attr', 'class').then((classes) => {
+            if (classes === undefined) {
+                cy.wrap($span).should('have.css', 'visibility', 'hidden');
+            }
+            else if (classes.includes('correctWord')) {
                 cy.wrap($span).should('have.css', 'visibility', 'visible');
             } else {
                 cy.wrap($span).should('have.css', 'visibility', 'hidden');
@@ -32,11 +35,6 @@ describe('Input Field Test', () => {
             cy.wrap($span).invoke('css', 'display').then((display) => {
                 // if display is none, the span is not on the screen and we don't need to check visibility
                 if (display !== 'none') {
-                    cy.wrap($span).invoke('css', 'color').then((color) => {
-                        if (color === 'rgb(0, 128, 0)') {
-                            cy.wrap($span).should('have.css', 'visibility', 'visible');
-                        }
-                    });
                     cy.wrap($span).should('have.css', 'visibility', 'visible');
                 }
             });

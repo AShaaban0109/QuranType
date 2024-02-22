@@ -54,3 +54,7 @@ Figure out ya encoding. Might be fine or might be an issue. do some research and
 sort out certain text not formatting properly like kasreteen then meen. DONE. Check if there is anything else like that.
 check if there is something wrong with copy and pasting from log of no tashkeel into the input box
 handle 
+
+
+
+

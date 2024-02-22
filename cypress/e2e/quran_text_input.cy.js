@@ -9,14 +9,14 @@ describe('Input Field Test', () => {
       const expectedText = 'بسم ';
       cy.get('#inputField').type(expectedText);
       cy.get('#inputField').should('have.value', '');
-      cy.get("span").eq(0).should('have.css', 'color', 'rgb(0, 128, 0)');
+      cy.get("span").eq(0).should('have.class', 'correctWord');
     });
   
     it('should have full green spans after completing the first surah', () => {
       const expectedText = 'بسم الله الرحمان الرحيم الحمد لله رب العالمين الرحمان الرحيم مالك يوم الدين إياك نعبد وإياك نستعين اهدنا الصراط المستقيم صراط الذين أنعمت عليهم غير المغضوب عليهم ولا الضالين ';
       cy.get('#inputField').type(expectedText);
       cy.get("#Quran-container span").each(($span) => {
-        cy.wrap($span).should('have.css', 'color', 'rgb(0, 128, 0)');
+        cy.wrap($span).should('have.class', 'correctWord');
       });
     });
 
@@ -28,7 +28,7 @@ describe('Input Field Test', () => {
         cy.get('#noTashkeelContainer').invoke('text').then(fullSurah => {
             cy.get('#inputField').type(fullSurah);
              // Select just the last span element for quicker computation
-            cy.get("#Quran-container span").last().should('have.css', 'color', 'rgb(0, 128, 0)');
+            cy.get("#Quran-container span").last().should('have.class', 'correctWord');
         });
     });
   });

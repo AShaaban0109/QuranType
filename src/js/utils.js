@@ -49,11 +49,13 @@ export function removeTashkeel(text) {
 }
 
 export function applyIncorrectWordStyle(incorrectWord) {
-    incorrectWord.style.color = "red";
+    incorrectWord.classList.remove('correctWord');
+    incorrectWord.classList.add('incorrectWord');
 }
 
 export function applyCorrectWordStyle(correctWord) {
-    correctWord.style.color = "green";
+    correctWord.classList.remove('incorrectWord');
+    correctWord.classList.add('correctWord');
 
     // Unhide word if hidden due to hideWords button. (The working is none, delete hidden later)
     if (correctWord.style.visibility === 'hidden') {
@@ -126,18 +128,27 @@ export function fillContainer(surahContent, container) {
 }
 
 export function initDarkMode(isDarkMode) {
+    const root = document.documentElement;
     // Apply dark mode if enabled
     if (isDarkMode) {
-        document.body.classList.add('dark-mode');
+        root.className = 'dark';
         document.getElementById('light-mode-icon').style.display = 'none';
         document.getElementById('dark-mode-icon').style.display = 'inline';
+    } else {
+        root.className = 'light';
+        document.getElementById('light-mode-icon').style.display = 'inline';
+        document.getElementById('dark-mode-icon').style.display = 'none';
     }
 }
 
 // Function to toggle dark mode
 export function toggleDarkMode(isDarkMode) {
     isDarkMode = !isDarkMode;
-    document.body.classList.toggle('dark-mode');
+
+    // use includes here to handle case where class name is smth like: 'dark 2sdf2sd'
+    const root = document.documentElement;
+    const newTheme = root.className.includes('dark') ? 'light' : 'dark';
+    root.className = newTheme;
 
     // Update the icon display
     document.getElementById('light-mode-icon').style.display = isDarkMode ? 'none' : 'inline';

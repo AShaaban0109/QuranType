@@ -12,7 +12,7 @@ describe('Input Field Test', () => {
         cy.get('#noTashkeelContainer').invoke('text').then(fullSurah => {
             cy.get('#inputField').type(fullSurah);
              // Select just the last span element for quicker computation
-            cy.get("#Quran-container span").last().should('have.css', 'color', 'rgb(0, 128, 0)');
+            cy.get("#Quran-container span").last().should('have.class', 'correctWord');
         });
     });
   });

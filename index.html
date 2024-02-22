@@ -31,10 +31,11 @@
 
 </head>
 <body>
-    <div id="header">
+    <header>
         <h1>Quran Type</h1>
         <div id="headerRight">
             <div id="searchContainer">
+                <label for='Surah-selection-input' class="visually-hidden">Enter Surah and Verse:</label>
                 <input type="search" placeholder="Enter Surah number" aria-label="Search Quran"
                         autocomplete="off" id="Surah-selection-input">
                 <button id="Display-Surah-button">Display</button>
@@ -49,9 +50,9 @@
                 </button>
             </div>
         </div>
-    </div>
+    </header>
 
-    <div value dir="rtl" id="contentContainer">
+    <main value dir="rtl" id="contentContainer">
         <div value dir="rtl" id="Surah-details">
             <div id="Surah-name"></div>
             <div value dir="rtl" id="Basmallah"></div>
@@ -61,14 +62,16 @@
         <div value dir="rtl" id="noTashkeelContainer"></div>
 
         <div value dir ="rtl" id="Quran-input-container">
-            <button id="hideAyahsButton">Hide Ayahs</button>    
+            <button id="hideAyahsButton">Hide Ayahs</button>
+
+            <label for='inputField' class="visually-hidden">Type the verses from the Quran shown:</label>
             <input autocomplete="off" value dir="rtl" id="inputField">
         </div>
-    </div>
+    </main>
 
-    <div id="footer">
+    <footer>
         <a href="https://api-docs.quran.com/docs/category/quran.com-api">Quran Api source</a>
         <a href="mailto:contact@qurantype.com">Contact Us</a>
-    </div>
+    </footer>
 </body>
 </html>

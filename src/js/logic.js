@@ -203,7 +203,6 @@ function handleOffsetTop(wordSpans, wordToCheck) {
 // This is because in this implementation they are rendered as seperate spans.
 function handleEndOfAyahCheck(wordSpans) {
     let endOfAyah = wordSpans[mainQuranWordIndex];
-    console.log(endOfAyah);
     while (QURAN_SYMBOLS.some(char => endOfAyah.textContent.includes(char))) {
         utils.applyCorrectWordStyle(endOfAyah)
         mainQuranWordIndex++
@@ -212,6 +211,8 @@ function handleEndOfAyahCheck(wordSpans) {
         // if there is a next word
         if (endOfAyah !== undefined) {
             handleOffsetTop(wordSpans, wordSpans[mainQuranWordIndex]);
+        } else {
+            break
         }
     }
 }
@@ -225,7 +226,7 @@ function handleHideAyahsButton(event) {
 
     if (isHideAyahsButtonActive) {
         wordSpans.forEach(span => {
-            if (span.style.display !== 'none' && span.style.color !== 'green') {
+            if (span.style.display !== 'none' && !span.classList.contains('correctWord')) {
                 span.style.visibility = 'hidden';
             }
           });
