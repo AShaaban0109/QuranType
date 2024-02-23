@@ -54,11 +54,28 @@ async function getSurah(surahNumber, startAyah, script) {
             throw new Error('Failed to fetch verses');
         }
         const data = await response.json();
-        displaySurahFromJson(data, startAyah, script)
+        if (startAyah > data.verses.length) {
+            const surahName= PROPERTIES_OF_SURAHS.chapters[surahNumber -1].name_simple
+            showToast(`${surahName} only contains ${data.verses.length} ayahs. `)
+            displaySurahFromJson(data, 1, script)
+        } else {
+            displaySurahFromJson(data, startAyah, script)
+        }
     } catch (error) {
         console.error('Error fetching verses:', error);
     }
 }
+
+function showToast(message) {
+    Toastify({
+        text: message,
+        duration: 5000, // Duration in milliseconds
+        gravity: "bottom", // toast position
+        position: 'center', // toast position
+        close: true,
+      }).showToast();
+}
+
 
 function processAyah(text) {
     let ayah = text
@@ -246,22 +263,39 @@ function processSearch(query) {
     } else {
         currentSearchQuery = query
     }
-    // TODO allow name search
-    // current functionality splits at ' ', ':', ',', and '-'
-    const numbers = query.trim().split(/[\s,:-]+/).map(Number);
 
-    switch (numbers.length) {
-      case 1:
-        getSurah(numbers[0], 1, 'uthmani')
-        break;
-      case 2:
-        getSurah(numbers[0], numbers[1], 'uthmani')
-        break;
-      case 3:
-        getSurah(numbers[0], numbers[1], numbers[2], 'uthmani')
-        break;
-      default:
-        alert("Please enter query in the format of a maximum of 3 numbers, seperated by spaces, commas, colons, or hyphens. ");
+    // current functionality splits at ' ', ':', ',', and '-'
+    const processedQuery = query.trim().split(/[\s,:-]+/);
+
+
+    // Reject if the query is more than 2 elements
+    if (processedQuery.length > 2) {
+        showToast(`Please enter query in the format of a maximum of 2 numbers (surah number and ayah number), seperated by spaces, commas, colons, or hyphens.  `)
+        return
+    } 
+    // Reject if the query is empty
+    else if (processedQuery.some((element, index) => index === 0 && element === '')) {
+        showToast(`Please enter query in the format of a maximum of 2 numbers (surah number and ayah number), seperated by spaces, commas, colons, or hyphens.  `)
+        return
+    }
+    // TODO Allow name search
+    // Reject if the query has text
+    else if (processedQuery.some(element => isNaN(element))) {
+        showToast(`Please enter query in the format of a maximum of 2 numbers (surah number and ayah number), seperated by spaces, commas, colons, or hyphens.  `)
+        return
+    } 
+    // Reject if the first number is over 114
+    else if (parseInt(processedQuery[0]) > 114) {
+        showToast(`Surah number must be between 1-114. `)
+        return
+    } 
+    else {
+        if (processedQuery.length === 1) {
+            getSurah(parseInt(processedQuery[0]), 1, 'uthmani')
+        } else if (processedQuery.length === 2) {
+            getSurah(parseInt(processedQuery[0]), parseInt(processedQuery[1]), 'uthmani')
+        }
+        return
     }
 }
 

@@ -169,6 +169,11 @@ a:hover {
     text-decoration: underline;
 }
 
+#Copyright {
+    margin: 0px;
+    color: var(--anchor-color);
+}
+
 #searchContainer {
     display: flex;
     gap: 5px;

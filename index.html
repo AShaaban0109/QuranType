@@ -12,6 +12,11 @@
     <!-- jquery for use in AJAX call -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+    <!-- For adding the toast functionality -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    
+
     <!-- TODO: MAYBE GET A LOGO IMAGE TO USE INSTEAD -->
     <!-- logo font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -62,15 +67,16 @@
         <div value dir="rtl" id="noTashkeelContainer"></div>
 
         <div value dir ="rtl" id="Quran-input-container">
-            <button id="hideAyahsButton">Hide Ayahs</button>
-
+            
             <label for='inputField' class="visually-hidden">Type the verses from the Quran shown:</label>
             <input autocomplete="off" value dir="rtl" id="inputField">
+            <button id="hideAyahsButton">Hide Ayahs</button>
         </div>
     </main>
 
     <footer>
-        <a href="https://api-docs.quran.com/docs/category/quran.com-api">Quran Api source</a>
+        <p id="Copyright">Copyright © 2024 Quran Type. All rights reserved.</p>
+        <a href="https://api-docs.quran.com/docs/category/quran.com-api" target="_blank">Quran Api source</a>
         <a href="mailto:contact@qurantype.com">Contact Us</a>
     </footer>
 </body>

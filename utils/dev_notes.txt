@@ -33,8 +33,6 @@ Mobile optimation and seo
 
 change the alert to a toast
 
-incorporate tab order to change it so the user tabs from the input part to the hide button instead of going to contact us
-
 LATER: make big screens better
 The upper limit is a little harder to clarify. These days super-duper-ultra-wide monitors aren’t uncommon, so you should plan for the possibility that your site could be viewed on some ridiculously wide monitor. Often, this is accomplished by setting up a max-width for all of your content and then centering that on the page. With a setup like that your content will look fine even on super-wide resolutions.
 
