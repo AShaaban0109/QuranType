@@ -9,9 +9,7 @@ export function convertToArabicNumber(englishNumber) {
       englishToArabicMap[englishDigits[i]] = arabicNumbers[i];
     }
   
-    const arabicNumber = englishNumber.replace(/\d/g, function (match) {
-      return englishToArabicMap[match];
-    });
+    const arabicNumber = englishNumber.replace(/\d/g, (match) => englishToArabicMap[match]);
   
     return arabicNumber;
 }
@@ -65,21 +63,21 @@ export function applyCorrectWordStyle(correctWord) {
 
 // quick insert and removal to get the true span offsetTop value
 export function getOriginalTopOffset(container) {
-    const testRow = document.createElement('div');
     const temp = document.createElement('span');
-    container.appendChild(testRow);
-    testRow.appendChild(temp)
 
-    let currentTopOffset = temp.offsetTop
-    testRow.removeChild(temp)
-    container.removeChild(testRow)
+    // Need to add text content so that Mozilla renders and calculates the original offset correctly.
+    temp.textContent="." 
+    container.appendChild(temp);
+    const currentTopOffset = temp.offsetTop
+    container.removeChild(temp)
+
     return currentTopOffset
 }
 
 export function handleHiddenWords(wordSpans, referenceSpan) {
     let foundReference = false;
 
-    wordSpans.forEach(function (span) {
+    wordSpans.forEach((span) => {
         if (!foundReference) {
             if (span === referenceSpan) {
                 foundReference = true;
@@ -99,10 +97,10 @@ export function clearContainer(container) {
 
 export function getTransitionDuration(element) {
     // Get the computed style of the element
-    let style = window.getComputedStyle(element);
+    const style = window.getComputedStyle(element);
     
     // Extract the 'transition-duration' property value
-    let transitionDuration = style.getPropertyValue('transition-duration');
+    const transitionDuration = style.getPropertyValue('transition-duration');
   
     // Convert the string value to a number in milliseconds
    return parseFloat(transitionDuration) * 1000;  
@@ -113,16 +111,16 @@ export function fillContainer(surahContent, container) {
     clearContainer(container)
 
     // turn each word into a span
-    let words = surahContent.split(" ")
+    const words = surahContent.split(" ")
     // console.log(words.join(" "));
     
 
     words.forEach((word) => {
-        let wordSpan = document.createElement("span");
-        wordSpan.textContent = word + " "
+        const wordSpan = document.createElement("span");
+        wordSpan.textContent = `${word  } `
         container.appendChild(wordSpan)
 
-        //temp
+        // temp
         // console.log(word.split(""));
     });
 }

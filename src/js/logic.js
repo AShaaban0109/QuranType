@@ -44,6 +44,9 @@ async function getSurah(surahNumber, startAyah, script) {
     mainQuranWordIndex = 0
     noTashkeelWordIndex = 0
 
+    secondRowTopOffset = 0
+    refWord = ""
+
     // Constructing the URL with query parameters
     const baseApiUrl = 'https://api.quran.com/api/v4';
     const url = `${baseApiUrl}/quran/verses/${script}?chapter_number=${surahNumber}`;
@@ -89,7 +92,7 @@ function processAyah(text) {
 }
 
 function processData(data, startAyah, script) {
-    const textProp = "text_" + script
+    const textProp = `text_${  script}`
     // fixes issue of all surahs except the first starting with a space, which messes up the indexing
     if (data.verses[0][textProp].startsWith(' ')) {
         data.verses[0][textProp] = data.verses[0][textProp].trim();
@@ -107,26 +110,29 @@ function displaySurahFromJson(data, startAyah, script) {
     const BasmallahContainer = document.getElementById("Basmallah");
     
     data = processData(data, startAyah, script)
-    let noTashkeelAyahs = []
+    const noTashkeelAyahs = []
 
-    let surahContent = data.verses.map(function (ayah, i) {
+    const surahContent = data.verses.map((ayah, i) => {
         const arabicNumber = utils.convertToArabicNumber(startAyah + i)
-        const processedAyah = processAyah(ayah["text_" + script])
+        const processedAyah = processAyah(ayah[`text_${  script}`])
         noTashkeelAyahs.push(processedAyah)
         
         return `${processedAyah} ﴿${arabicNumber}﴾`;
     }).join(" ");
 
     const chapterNumber = data.meta.filters.chapter_number -1 
-    surahName.textContent = "سورة " + PROPERTIES_OF_SURAHS.chapters[chapterNumber].name_arabic
+    surahName.textContent = `سورة ${  PROPERTIES_OF_SURAHS.chapters[chapterNumber].name_arabic}`
 
     const isThereABasmalah = PROPERTIES_OF_SURAHS.chapters[chapterNumber].bismillah_pre
     if (isThereABasmalah) {
         BasmallahContainer.textContent = BASMALLA;
+    } else {
+        // to clear prev if there was one
+        BasmallahContainer.textContent = "";
     }
 
   // Wait for fonts to load then fill container. Fixes offsetTop issue
-  document.fonts.ready.then(function () {
+  document.fonts.ready.then(() => {
         // The code using offsetTop here
         fillContainerWithRows(surahContent, quranContainer);
     });
@@ -142,10 +148,10 @@ function fillContainerWithRows(surahContent, container) {
     utils.clearContainer(container);
     originalTopOffset = utils.getOriginalTopOffset(container)
 
-    let words = surahContent.split(" ");
+    const words = surahContent.split(" ");
     words.forEach((word) => {
         const span = document.createElement('span');
-        span.textContent = word + ' ';
+        span.textContent = `${word  } `;
         container.appendChild(span);
     });
 }
@@ -260,9 +266,9 @@ function processSearch(query) {
     // to prevent constant clicking of search button, with the same query
     if (currentSearchQuery === query) {
         return
-    } else {
+    } 
         currentSearchQuery = query
-    }
+    
 
     // current functionality splits at ' ', ':', ',', and '-'
     const processedQuery = query.trim().split(/[\s,:-]+/);
@@ -271,38 +277,35 @@ function processSearch(query) {
     // Reject if the query is more than 2 elements
     if (processedQuery.length > 2) {
         showToast(`Please enter query in the format of a maximum of 2 numbers (surah number and ayah number), seperated by spaces, commas, colons, or hyphens.  `)
-        return
+        
     } 
     // Reject if the query is empty
     else if (processedQuery.some((element, index) => index === 0 && element === '')) {
         showToast(`Please enter query in the format of a maximum of 2 numbers (surah number and ayah number), seperated by spaces, commas, colons, or hyphens.  `)
-        return
+        
     }
     // TODO Allow name search
     // Reject if the query has text
     else if (processedQuery.some(element => isNaN(element))) {
         showToast(`Please enter query in the format of a maximum of 2 numbers (surah number and ayah number), seperated by spaces, commas, colons, or hyphens.  `)
-        return
+        
     } 
     // Reject if the first number is over 114
     else if (parseInt(processedQuery[0]) > 114) {
         showToast(`Surah number must be between 1-114. `)
-        return
+        
     } 
-    else {
-        if (processedQuery.length === 1) {
+    else if (processedQuery.length === 1) {
             getSurah(parseInt(processedQuery[0]), 1, 'uthmani')
         } else if (processedQuery.length === 2) {
             getSurah(parseInt(processedQuery[0]), parseInt(processedQuery[1]), 'uthmani')
         }
-        return
-    }
 }
 
 function addListeners() {
     // Adding event listener for dark mode toggle
     const darkModeButton = document.getElementById('dark-mode-toggle');
-    darkModeButton.addEventListener('click', function() {
+    darkModeButton.addEventListener('click', () => {
         isDarkMode = utils.toggleDarkMode(isDarkMode)
     });
 
@@ -313,22 +316,21 @@ function addListeners() {
     // isDarkMode = utils.toggleDarkMode(isDarkMode)
 
 
-    var inputElement = document.getElementById("inputField");
-    var processButton = document.getElementById("processButton");
+    const inputElement = document.getElementById("inputField");
 
     // Add event listeners for typing
     inputElement.addEventListener("input", handleInput);
 
-    var surahInputElement = document.getElementById("Surah-selection-input");
-    var surahProcessButton = document.getElementById("Display-Surah-button");
+    const surahInputElement = document.getElementById("Surah-selection-input");
+    const surahProcessButton = document.getElementById("Display-Surah-button");
 
     // Add event listeners for Surah selection
-    surahProcessButton.addEventListener("click", function() {
-        var inputValue = surahInputElement.value;
+    surahProcessButton.addEventListener("click", () => {
+        const inputValue = surahInputElement.value;
         processSearch(inputValue)
     });
 
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", () => {
         // Focus on the input box when the page is loaded
         document.getElementById("inputField").focus();
     });

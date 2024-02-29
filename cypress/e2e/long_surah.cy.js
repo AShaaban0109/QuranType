@@ -5,7 +5,7 @@ describe('Input Field Test', () => {
     });
 
     it('should work with longer surahs', () => {
-        let chosenSurah = 12  // Yusuf
+        const chosenSurah = 12  // Yusuf
         cy.get('#Surah-selection-input').type(chosenSurah)
         cy.get('#Display-Surah-button').click()
         cy.wait(3000); 

@@ -21,7 +21,7 @@ describe('Input Field Test', () => {
     });
 
     it("should work with a surah that doesn't fully fit in the container", () => {
-        let chosenSurah = 96  // Al-Alaqremove and un-remove all words when the Hide Ayahs button is clicked
+        const chosenSurah = 96  // Al-Alaqremove and un-remove all words when the Hide Ayahs button is clicked
         cy.get('#Surah-selection-input').type(chosenSurah)
         cy.get('#Display-Surah-button').click()
         cy.wait(2000); 
