@@ -36,6 +36,10 @@ export function removeTashkeel(text) {
     //  so for something like فى it is written في. Not sure if this is fine, check with someone arabic literate
     noTashkeel = noTashkeel.replace(/\u06CC/g,'\u064A');  
 
+    // handle hamza above the line extender char. (the part below removes this char, so we have to handle here.)
+    noTashkeel = noTashkeel.replace(/\u0640\u0654/g,'\u0626'); // ya
+
+
     // this removes everything that isnt a main char, or a hamza above or below, or a spacebar
     // noTashkeel = noTashkeel.replace(/[^\u0621-\u063A\u0641-\u064A\u0654-\u0655 ]/g, '');
     noTashkeel = noTashkeel.replace(/[^\u0621-\u063A\u0641-\u064A\u0654-\u0655 ]/g, '');
@@ -43,8 +47,28 @@ export function removeTashkeel(text) {
     // // change the ya with hamza underneath and to ya with hamza above as this is available on keyboard
     noTashkeel = noTashkeel.replace(/\u0649\u0655/g,'\u0626');
 
+    // fixes a bug with words like: الأيات . the lam then alef then hamza causes an issue.
+    noTashkeel = noTashkeel.replace(/\u0654\u0627/g,'\u0623');
+    noTashkeel = noTashkeel.replace(/\u0655\u0627/g,'\u0625');
+    
+    // for ya and waw with hamza above (Havent checked if they apply). 
+    noTashkeel = noTashkeel.replace(/\u0654\u0648/g,'\u0624'); // waw
+    noTashkeel = noTashkeel.replace(/\u0654\u064A/g,'\u0626'); // ya
+    
     return noTashkeel
 }
+
+// for local debugging
+function toUnicode(text) {
+    let unicode = '';
+    for (let i = 0; i < text.length; i++) {
+        unicode += '\\u' + text.charCodeAt(i).toString(16).toUpperCase().padStart(4, '0');
+    }
+    return unicode;
+}
+// console.log(toUnicode("هَدَىٰكُمْ"));
+// console.log(toUnicode(removeTashkeel("هَدَىٰكُمْ")));
+// console.log(removeTashkeel('هَدَىٰكُمْ'));
 
 export function applyIncorrectWordStyle(incorrectWord) {
     incorrectWord.classList.remove('correctWord');
